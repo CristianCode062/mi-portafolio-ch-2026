@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { motion } from "framer-motion";
 
 /* ======================================================
    TIPOS
@@ -119,39 +120,119 @@ export default function About() {
     container.appendChild(renderer.domElement);
     sceneRef.current.renderer = renderer;
 
-    /* ========== TIERRA CON EFECTO MEJORADO ========== */
-    const earthGeometry = new THREE.SphereGeometry(2.5, 64, 64);
+    /* ========== TIERRA CON TEXTURA Y GEOGRAFÍA ========== */
+    const earthGeometry = new THREE.SphereGeometry(2.5, 128, 128);
+    
+    // Crear textura procedural de tierra con continentes
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d')!;
+    
+    // Oceano base
+    const oceanGradient = ctx.createLinearGradient(0, 0, 0, 512);
+    oceanGradient.addColorStop(0, '#001a3d');
+    oceanGradient.addColorStop(0.5, '#0a2b52');
+    oceanGradient.addColorStop(1, '#001a3d');
+    ctx.fillStyle = oceanGradient;
+    ctx.fillRect(0, 0, 1024, 512);
+    
+    // Dibujar continentes estilizados
+    ctx.fillStyle = '#1a4d3d';
+    ctx.globalAlpha = 0.7;
+    
+    // America
+    ctx.beginPath();
+    ctx.ellipse(200, 200, 80, 120, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(220, 320, 60, 100, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Europa/África
+    ctx.beginPath();
+    ctx.ellipse(520, 180, 70, 90, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(540, 300, 80, 110, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Asia
+    ctx.beginPath();
+    ctx.ellipse(700, 200, 120, 100, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Australia
+    ctx.beginPath();
+    ctx.ellipse(800, 380, 50, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Agregar brillo a los continentes
+    ctx.fillStyle = '#2d7a5f';
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.ellipse(200, 190, 60, 100, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    
     const earthMaterial = new THREE.MeshPhongMaterial({
-      color: 0x0a1628,
-      emissive: 0x001a3d,
-      shininess: 30,
+      map: texture,
+      emissive: 0x002244,
+      emissiveIntensity: 0.2,
+      shininess: 50,
       specular: 0x00ffff,
+      specularMap: texture,
     });
+    
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     scene.add(earth);
     sceneRef.current.earth = earth;
 
-    // Atmosphera glow
-    const atmosphereGeometry = new THREE.SphereGeometry(2.7, 64, 64);
+    // Atmosphera glow mejorada
+    const atmosphereGeometry = new THREE.SphereGeometry(2.72, 64, 64);
     const atmosphereMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
+      color: 0x00d9ff,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.2,
       side: THREE.BackSide,
     });
     const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
     scene.add(atmosphere);
+    
+    // Glow exterior adicional
+    const glowGeometry = new THREE.SphereGeometry(2.85, 64, 64);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: 0x0099ff,
+      transparent: true,
+      opacity: 0.08,
+      side: THREE.BackSide,
+    });
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    scene.add(glow);
 
-    // Wireframe
-    const wireframeGeometry = new THREE.SphereGeometry(2.52, 40, 40);
+    // Wireframe más detallado
+    const wireframeGeometry = new THREE.SphereGeometry(2.53, 48, 48);
     const wireframeMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ffff,
       wireframe: true,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.25,
     });
     const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
     scene.add(wireframe);
+    
+    // Grid ecuatorial
+    const gridGeometry = new THREE.TorusGeometry(2.52, 0.005, 16, 100);
+    const gridMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ffff,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const equator = new THREE.Mesh(gridGeometry, gridMaterial);
+    equator.rotation.x = Math.PI / 2;
+    scene.add(equator);
 
     /* ========== STARLINK SATELLITES ========== */
     const starlinkGroup = new THREE.Group();
@@ -162,7 +243,6 @@ export default function About() {
       const angle = (i / numStarlinks) * Math.PI * 2;
       const orbitTilt = ((i % 6) * 30) * (Math.PI / 180);
 
-      // Satellite body
       const satGeometry = new THREE.BoxGeometry(0.08, 0.05, 0.03);
       const satMaterial = new THREE.MeshPhongMaterial({
         color: 0x00ffff,
@@ -172,7 +252,6 @@ export default function About() {
       });
       const satellite = new THREE.Mesh(satGeometry, satMaterial);
 
-      // Solar panels
       const panelGeometry = new THREE.BoxGeometry(0.15, 0.05, 0.01);
       const panelMaterial = new THREE.MeshPhongMaterial({
         color: 0x1a4d7a,
@@ -380,17 +459,26 @@ export default function About() {
     scene.add(stars);
     sceneRef.current.stars = stars;
 
-    /* ========== LUCES ========== */
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    /* ========== LUCES MEJORADAS ========== */
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.PointLight(0x00ffff, 2, 100);
-    sunLight.position.set(10, 5, 10);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    sunLight.position.set(5, 3, 5);
     scene.add(sunLight);
 
-    const backLight = new THREE.PointLight(0xff0080, 1.5, 100);
+    const fillLight = new THREE.PointLight(0x00ffff, 1.2, 100);
+    fillLight.position.set(-5, 2, 5);
+    scene.add(fillLight);
+
+    const backLight = new THREE.PointLight(0xff0080, 1, 100);
     backLight.position.set(-10, -5, -10);
     scene.add(backLight);
+    
+    // Luz rimlight para el borde de la tierra
+    const rimLight = new THREE.PointLight(0x00d9ff, 0.8, 50);
+    rimLight.position.set(0, 0, -8);
+    scene.add(rimLight);
 
     /* ========== INTERACCIÓN DEL MOUSE ========== */
     let targetRotationX = 0;
@@ -414,18 +502,15 @@ export default function About() {
       animationId = requestAnimationFrame(animate);
       time += 0.01;
 
-      // Rotación de la tierra
       earth.rotation.y += 0.002;
       wireframe.rotation.y += 0.002;
 
-      // Pulso de la atmósfera
       atmosphere.scale.set(
         1 + Math.sin(time * 0.5) * 0.03,
         1 + Math.sin(time * 0.5) * 0.03,
         1 + Math.sin(time * 0.5) * 0.03
       );
 
-      // Órbita de satélites Starlink
       starlinkGroup.children.forEach((sat) => {
         const data = (sat as any).userData;
         data.angle += data.speed;
@@ -437,7 +522,6 @@ export default function About() {
         sat.rotation.z += 0.05;
       });
 
-      // Órbita de satélites GPS
       gpsGroup.children.forEach((sat) => {
         const data = (sat as any).userData;
         data.angle += data.speed;
@@ -449,14 +533,12 @@ export default function About() {
         sat.rotation.y += 0.03;
       });
 
-      // Actualizar líneas de comunicación
       lineUpdateCounter++;
       if (lineUpdateCounter > 60) {
         createCommLines();
         lineUpdateCounter = 0;
       }
 
-      // Rotación de asteroides
       asteroidGroup.children.forEach((asteroid) => {
         const data = (asteroid as any).userData;
         asteroid.rotation.x += data.rotationSpeed.x;
@@ -464,14 +546,11 @@ export default function About() {
         asteroid.rotation.z += data.rotationSpeed.z;
       });
 
-      // Rotación de nebulosa
       nebula.rotation.y += 0.0002;
       nebula.rotation.x += 0.0001;
 
-      // Parpadeo de estrellas
       starsMaterial.opacity = 0.6 + Math.sin(time * 0.5) * 0.2;
 
-      // Movimiento de cámara con mouse
       currentRotationX += (targetRotationX - currentRotationX) * 0.05;
       currentRotationY += (targetRotationY - currentRotationY) * 0.05;
 
@@ -508,67 +587,176 @@ export default function About() {
   }, []);
 
   return (
-    <section className="relative min-h-screen w-full bg-black overflow-hidden grid grid-cols-1 lg:grid-cols-2">
-      {/* Texto a la izquierda */}
-      <div className="z-10 flex flex-col justify-center px-6 md:px-12 py-24 min-h-screen relative">
-        <div className="max-w-xl">
-          <h2 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            Acerca de mí
-          </h2>
-          <p className="text-cyan-200/80 mb-6 text-lg leading-relaxed font-light">
-            Ingeniero y líder tecnológico especializado en sistemas críticos, tiempo real y plataformas distribuidas de misión crítica. Con más de una década de experiencia navegando la intersección entre infraestructura resiliente y soluciones escalables.
-          </p>
-          <p className="text-blue-200/80 mb-6 text-lg leading-relaxed font-light">
-            Diseño y opero arquitecturas que integran software, IoT, analítica avanzada y conectividad satelital, priorizando resiliencia, observabilidad y escala. He liderado equipos multidisciplinarios en proyectos que demandaban decisiones tecnológicas bajo presión extrema, donde cada milisegundo cuenta.
-          </p>
-          <p className="text-purple-200/80 mb-6 text-lg leading-relaxed font-light">
-            Mi enfoque es holístico: no solo construyo sistemas que funcionan, sino que evolucionan. Desde el diseño de protocolos de comunicación en edge computing hasta la orquestación de microservicios críticos, cada componente se alinea con objetivos de negocio y sostenibilidad técnica.
-          </p>
-          <p className="text-slate-300 mb-6 text-lg leading-relaxed font-light">
-            Mi trabajo vive donde convergen ingeniería profunda, impacto real y toma de decisiones en entornos de alta presión. Creo que la verdadera excelencia técnica no es visible—es transparente, confiable y adaptable a los cambios del mercado.
-          </p>
-          <p className="text-cyan-300/70 text-lg leading-relaxed font-light italic">
-            Busco continuamente desafíos que me permitan expandir los límites de lo posible, trabajando con equipos que comparten esa pasión por la innovación responsable.
-          </p>
-        </div>
+    <section className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-black overflow-hidden">
+      {/* Barra roja superior */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent z-10"></div>
+
+      <div className="relative grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+        {/* Canvas 3D - Izquierda */}
         <div 
-          className="absolute right-0 top-0 w-64 h-full pointer-events-none"
-          style={{
-            background: "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%)",
-            zIndex: 5
-          }}
-        />
+          ref={mountRef} 
+          className="relative w-full h-screen"
+        >
+          {/* Indicador de Métricas */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className={`absolute bottom-8 left-8 backdrop-blur-xl border rounded-xl p-5 text-xs z-20 transition-all shadow-2xl ${
+              metrics.incident
+                ? "bg-red-950/80 border-red-500/50"
+                : "bg-slate-900/80 border-cyan-500/30"
+            }`}
+          >
+            <div className="font-semibold tracking-wider uppercase text-xs text-slate-400 mb-2">
+              Latency
+            </div>
+            <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-3">
+              {metrics.latency.toFixed(1)} <span className="text-lg">ms</span>
+            </div>
+            <div className="text-xs space-y-1 text-slate-400">
+              <div>Region: {metrics.region}</div>
+              <div>FPS: {metrics.fps}</div>
+            </div>
+            {metrics.incident && (
+              <div className="pt-3 mt-3 border-t border-red-500/30 font-bold tracking-widest text-red-400 animate-pulse text-xs">
+                ⚠ INCIDENT DETECTED
+              </div>
+            )}
+          </motion.div>
+
+          {/* Iconos de satélites decorativos */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="absolute top-32 left-12 text-cyan-400/40 text-7xl z-10"
+          >
+            📡
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.7 }}
+            className="absolute bottom-32 right-12 text-cyan-400/40 text-6xl z-10"
+          >
+            🛰️
+          </motion.div>
+        </div>
+
+        {/* Contenido de texto - Derecha */}
+        <div className="relative z-10 flex flex-col justify-center px-8 md:px-16 py-24">
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="max-w-2xl"
+          >
+            {/* Badge de IA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full"
+            >
+              <span className="text-red-400 text-sm font-semibold">🤖 IA</span>
+            </motion.div>
+
+            {/* Título principal */}
+            <motion.h2
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
+            >
+              <span className="bg-gradient-to-r from-slate-300 to-slate-500 bg-clip-text text-transparent">
+                ACERCA DE MI 
+              </span>
+            </motion.h2>
+
+            {/* Descripción principal */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-4 mb-8"
+            >
+              <p className="text-slate-300 text-base leading-relaxed">
+                Ingeniero y líder tecnológico especializado en <span className="font-semibold text-white">sistemas críticos, tiempo real y plataformas distribuidas de misión crítica</span>. Con más de una década de experiencia navegando la intersección entre infraestructura resiliente y soluciones escalables.
+              </p>
+              <p className="text-slate-300 text-base leading-relaxed">
+                Diseño y opero arquitecturas que integran <span className="text-cyan-400 font-semibold">software, IoT, analítica avanzada y conectividad satelital</span>, priorizando resiliencia, observabilidad y escala. He liderado equipos multidisciplinarios en proyectos que demandaban <span className="font-semibold text-white">decisiones tecnológicas bajo presión extrema</span>, donde cada milisegundo cuenta.
+              </p>
+              <p className="text-slate-300 text-base leading-relaxed">
+                Mi enfoque es holístico: no solo construyo sistemas que funcionan, sino que <span className="font-semibold text-white">evolucionan</span>. Desde el diseño de protocolos de comunicación en edge computing hasta la orquestación de microservicios críticos, cada componente se alinea con objetivos de negocio y sostenibilidad técnica.
+              </p>
+            </motion.div>
+
+            {/* Features list */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="space-y-4 mb-8"
+            >
+              {[
+                "⊕ Arquitecturas de sistemas críticos y tiempo real",
+                "⊕ Liderazgo técnico en proyectos de alta complejidad",
+                "⊕ Integración de IoT, IA y conectividad satelital"
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+                  className="flex items-center gap-3 px-5 py-3 bg-slate-800/30 border border-slate-700/30 rounded-lg hover:border-cyan-500/50 hover:bg-slate-800/50 transition-all duration-300"
+                >
+                  <span className="text-slate-300 font-medium">{item}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* CTA Final */}
+            <motion.p
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="text-slate-400 text-base leading-relaxed italic"
+            >
+              Busco continuamente desafíos que me permitan expandir los límites de lo posible, trabajando con equipos que comparten esa pasión por la innovación responsable.
+            </motion.p>
+
+            {/* Botón Ver más */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="mt-8"
+            >
+              <a 
+                href="#proyectos"
+                className="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg hover:shadow-xl hover:shadow-cyan-500/50 hover:scale-105 transition-all duration-300"
+              >
+                Ver proyectos
+              </a>
+            </motion.div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Canvas 3D a la derecha */}
-      <div 
-        ref={mountRef} 
-        className="relative w-full min-h-screen"
-        style={{
-          background: "radial-gradient(ellipse at center, #0a0e1a 0%, #000000 100%)"
-        }}
-      >
-        {/* Indicador de Métricas dentro del canvas */}
-        <div
-          className={`absolute bottom-8 left-6 backdrop-blur-2xl border rounded-2xl p-6 text-xs space-y-2 z-20 transition-all shadow-2xl ${
-            metrics.incident
-              ? "bg-red-950/60 border-red-400/50 text-red-200"
-              : "bg-cyan-950/60 border-cyan-400/40 text-cyan-200"
-          }`}
-        >
-          <div className="font-semibold tracking-widest uppercase text-sm">Latency</div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{metrics.latency.toFixed(1)} ms</div>
-          <div className="text-xs mt-3 space-y-1 opacity-75">
-            <div>Region: {metrics.region}</div>
-            <div>FPS: {metrics.fps}</div>
-          </div>
-          {metrics.incident && (
-            <div className="pt-2 font-bold tracking-widest text-red-400 animate-pulse">
-              ⚠ INCIDENT DETECTED
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Barra roja inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
     </section>
   );
 }
