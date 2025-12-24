@@ -1,5 +1,5 @@
 import MatrixRain from "../components/background/MatrixRain";
-import PillNav, { PillNavItem } from "../components/ui/PillNav";
+import AdvancedPillNav from "../components/ui/AdvancedPillNav";
 
 import Hero from "../components/sections/Hero";
 import About from "../components/sections/About";
@@ -8,12 +8,12 @@ import Education from "../components/sections/Education";
 import Skills from "../components/sections/Skills";
 import TechStack from "../components/sections/TechStack";
 import Projects from "../components/sections/Projects";
-import Videos from "../components/sections/Videos";
+import Videos from "../components/videos/Videos";
 import Contact from "../components/sections/Contact";
 import Footer from "../components/sections/Footer";
 
 export default function Portfolio() {
-  const navItems: PillNavItem[] = [
+  const navItems = [
     { label: "Inicio", href: "inicio" },
     { label: "Acerca", href: "acerca" },
     { label: "Experiencia", href: "experiencia" },
@@ -26,14 +26,14 @@ export default function Portfolio() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
-      {/* Background effects */}
+    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-black via-slate-950 to-black text-white">
+      {/* Background */}
       <MatrixRain />
 
       {/* Navigation */}
-      <PillNav items={navItems} initialLoadAnimation />
+      <AdvancedPillNav items={navItems} />
 
-      {/* Page content */}
+      {/* Content */}
       <main className="relative z-10">
         <section id="inicio">
           <Hero />
@@ -63,6 +63,7 @@ export default function Portfolio() {
           <Projects />
         </section>
 
+        {/* VIDEOS: demos + feed tipo TikTok */}
         <section id="videos">
           <Videos />
         </section>

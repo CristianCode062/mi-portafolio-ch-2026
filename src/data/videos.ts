@@ -1,10 +1,53 @@
-export const videos = [
-  { id: 1, title: "Sistema IA en Producción", url: "https://www.youtube.com/embed/VIDEO_ID_1" },
-  { id: 2, title: "Arquitectura Backend Escalable", url: "https://www.youtube.com/embed/VIDEO_ID_2" },
-  { id: 3, title: "Demo IoT Industrial", url: "https://www.youtube.com/embed/VIDEO_ID_3" },
-  { id: 4, title: "Automatización Inteligente", url: "https://www.youtube.com/embed/VIDEO_ID_4" },
-  { id: 5, title: "Microservicios con NestJS", url: "https://www.youtube.com/embed/VIDEO_ID_5" },
-  { id: 6, title: "Seguridad y Monitoreo", url: "https://www.youtube.com/embed/VIDEO_ID_6" },
-  { id: 7, title: "Integración con APIs REST", url: "https://www.youtube.com/embed/VIDEO_ID_7" },
-  { id: 8, title: "Sistemas en Tiempo Real", url: "https://www.youtube.com/embed/VIDEO_ID_8" },
+export interface VideoItem {
+  id: number;
+  title: string;
+  description?: string;
+  youtubeId: string;
+  tags?: string[];
+}
+
+export const videos: VideoItem[] = [
+  {
+    id: 1,
+    title: "Sistema IA en Producción",
+    description: "Modelo de IA desplegado en entorno real con monitoreo",
+    youtubeId: "qvntOkgKsss",
+    tags: ["IA", "ML", "Producción"],
+  },
+  {
+    id: 2,
+    title: "Arquitectura Backend Escalable",
+    description: "Backend preparado para alto tráfico",
+    youtubeId: "4zmuycDHV2Y",
+    tags: ["Backend", "Arquitectura"],
+  },
+  {
+    id: 3,
+    title: "Demo IoT Industrial",
+    description: "Sensores y monitoreo industrial en tiempo real",
+    youtubeId: "x5GML1FqcTQ",
+    tags: ["IoT", "Industria"],
+  },
+  {
+    id: 4,
+    title: "Automatización Inteligente",
+    description: "Workflows automáticos con lógica inteligente",
+    youtubeId: "pC5W88NTJ1U",
+    tags: ["Automatización", "IA"],
+  },
+  {
+    id: 5,
+    title: "Microservicios con NestJS",
+    description: "Arquitectura moderna con NestJS",
+    youtubeId: "t0D4OPcugyI",
+    tags: ["NestJS", "Microservicios"],
+  },
+  {
+    id: 6,
+    title: "Seguridad y Monitoreo",
+    description: "Observabilidad y alertas en producción",
+    youtubeId: "Jet1HBBJyXg",
+    tags: ["Seguridad", "Monitoring"],
+  },
+ 
 ];

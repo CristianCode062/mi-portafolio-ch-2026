@@ -1,7 +1,35 @@
+import { motion } from "framer-motion";
+import ProfileCard from "@/components/ui/ProfileCard";
+
 export default function Hero() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="max-w-4xl text-center">
+    <div className="relative min-h-screen flex items-center justify-center px-6 bg-black/40">
+      <div className="max-w-4xl text-center relative z-20">
+        {/* ProfileCard React Bits */}
+        <div className="flex justify-center mb-12">
+          <ProfileCard
+            avatarUrl="/CH.jpeg"
+            name=""
+            title=""
+            handle="cristiancodes"
+            status="Online"
+            contactText="Contact Me"
+            showUserInfo={false}
+            enableTilt={true}
+            enableMobileTilt={false}
+            behindGlowEnabled={false}
+            behindGlowColor="rgba(6, 182, 212, 0.5)"
+            behindGlowSize="50%"
+            innerGradient="linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)"
+            onContactClick={() => {
+              const contactSection = document.getElementById("contacto");
+              if (contactSection) {
+                contactSection.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+          />
+        </div>
+
         <h1 className="text-5xl md:text-7xl font-bold mb-4">
           Cristian Hernández
         </h1>
@@ -25,6 +53,9 @@ export default function Hero() {
           </a>
         </div>
       </div>
+
+      {/* Barra roja decorativa al final de la sección */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
     </div>
   );
 }
