@@ -1,5 +1,4 @@
 import MatrixRain from "../components/background/MatrixRain";
-import AuroraBg from "../components/background/AuroraBg";
 import PillNav, { PillNavItem } from "../components/ui/PillNav";
 
 import Hero from "../components/sections/Hero";
@@ -30,7 +29,6 @@ export default function Portfolio() {
     <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
       {/* Background effects */}
       <MatrixRain />
-      <AuroraBg />
 
       {/* Navigation */}
       <PillNav items={navItems} initialLoadAnimation />

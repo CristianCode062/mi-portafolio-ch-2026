@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 const _MotionRef = motion;
 import SplitText from "./components/SplitText";
 import PillNav from "./components/PillNav";
-import Aurora from './components/Aurora';
 
 const MatrixRain = () => {
   const canvasRef = useRef(null);
@@ -612,14 +611,6 @@ const Portfolio = () => {
 
       {/* Matrix Rain Background */}
       <MatrixRain />
-      {/* Aurora overlay (soft colorful aurora bands) */}
-      <Aurora
-        colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
-        blend={0.5}
-        amplitude={1.0}
-        speed={0.45}
-        className="hidden sm:block"
-      />
 
       {/* Content with higher z-index */}
       <div className="relative z-10">
