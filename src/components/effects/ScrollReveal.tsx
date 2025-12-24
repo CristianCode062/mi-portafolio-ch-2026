@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
+import { fadeUp } from "../../animations/variants";
 
 export default function ScrollReveal({
   children,
@@ -8,25 +10,16 @@ export default function ScrollReveal({
   children: React.ReactNode;
   className?: string;
 }) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => e.isIntersecting && setVisible(true),
-      { threshold: 0.1 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 20 }}
-      animate={visible ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6 }}
+      variants={fadeUp}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
     >
       {children}
     </motion.div>

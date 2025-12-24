@@ -1,24 +1,25 @@
-import ScrollReveal from "../effects/ScrollReveal";
-
 export default function About() {
   return (
-    <section id="acerca" className="py-20 px-4">
-      <ScrollReveal>
-        <h2 className="text-4xl font-bold text-center text-white mb-8">
-          Acerca de Mí
-        </h2>
-      </ScrollReveal>
+    <div className="max-w-5xl mx-auto py-24 px-6">
+      <h3 className="text-3xl font-semibold mb-6">Acerca de mí</h3>
 
-      <div className="max-w-4xl mx-auto text-gray-300 space-y-4">
-        <p>
-          Líder tecnológico con fuerte base técnica, especializado en backend,
-          IoT, IA y sistemas críticos.
-        </p>
-        <p>
-          Experiencia real liderando proyectos end-to-end en producción,
-          procesando millones de eventos por segundo.
-        </p>
-      </div>
-    </section>
+      <p className="text-slate-300 leading-relaxed">
+        Soy un líder tecnológico con fuerte base técnica, especializado en el
+        diseño, desarrollo y gestión de sistemas críticos de alta complejidad.
+        He liderado soluciones end-to-end integrando software, electrónica,
+        IoT, inteligencia artificial y plataformas satelitales.
+      </p>
+
+      <p className="text-slate-300 leading-relaxed mt-4">
+        A lo largo de mi carrera he trabajado en entornos industriales exigentes,
+        procesando millones de eventos en tiempo real, priorizando escalabilidad,
+        seguridad y continuidad operacional.
+      </p>
+
+      <p className="text-slate-300 leading-relaxed mt-4">
+        Creo en un liderazgo técnico y humano, donde la calidad del software y
+        el crecimiento del equipo son igual de importantes.
+      </p>
+    </div>
   );
 }

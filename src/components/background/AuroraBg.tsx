@@ -1,4 +1,4 @@
-import Aurora from "../Aurora";
+import Aurora from "../ui/Aurora";
 
 export default function AuroraBg() {
   return (
@@ -7,7 +7,7 @@ export default function AuroraBg() {
       blend={0.5}
       amplitude={1}
       speed={0.45}
-      className="hidden sm:block"
+      className="absolute inset-0 -z-10 pointer-events-none hidden sm:block"
     />
   );
 }

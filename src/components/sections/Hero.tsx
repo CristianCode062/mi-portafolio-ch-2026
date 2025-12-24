@@ -1,36 +1,30 @@
-import { Mail, MapPin, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
-import SplitText from "../SplitText";
-
-export default function Hero({ onScroll }: { onScroll: (id: string) => void }) {
+export default function Hero() {
   return (
-    <section id="inicio" className="min-h-screen flex items-center justify-center">
-      <div className="text-center text-white">
-        <motion.h1 className="text-6xl font-bold mb-4">
-          <SplitText text="Cristian Hernández" />
-        </motion.h1>
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="max-w-4xl text-center">
+        <h1 className="text-5xl md:text-7xl font-bold mb-4">
+          Cristian Hernández
+        </h1>
 
-        <p className="text-cyan-400 text-2xl mb-2">
-          Project Manager – Full Stack
+        <h2 className="text-xl md:text-2xl text-blue-300 mb-6">
+          Senior Software Engineer · Tech Lead · Project Manager
+        </h2>
+
+        <p className="text-slate-300 leading-relaxed mb-8">
+          Ingeniero Informático especializado en el diseño, desarrollo y liderazgo
+          de sistemas tecnológicos críticos de alta complejidad, integrando
+          software, IoT, inteligencia artificial y automatización a escala industrial.
         </p>
-        <p className="text-gray-300 mb-8">Ingeniero Informático</p>
 
-        <div className="flex justify-center gap-4 mb-8">
-          <a
-            href="mailto:emilianohu@icloud.com"
-            className="px-6 py-3 bg-blue-600 rounded-lg flex items-center gap-2"
-          >
-            <Mail /> Email
+        <div className="flex justify-center gap-4">
+          <a href="#contacto" className="px-6 py-3 bg-blue-600 rounded-full">
+            Contacto
           </a>
-          <span className="flex items-center gap-2 text-gray-300">
-            <MapPin /> Puerto Montt
-          </span>
+          <a href="#proyectos" className="px-6 py-3 border border-white/30 rounded-full">
+            Ver proyectos
+          </a>
         </div>
-
-        <button onClick={() => onScroll("acerca")}>
-          <ChevronDown size={40} />
-        </button>
       </div>
-    </section>
+    </div>
   );
 }
