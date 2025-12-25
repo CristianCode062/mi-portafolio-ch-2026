@@ -1,5 +1,7 @@
+// app/(pages)/portfolio.tsx  (o donde lo tengas)
+
 import MatrixRain from "../components/background/MatrixRain";
-import AdvancedPillNav from "../components/ui/AdvancedPillNav";
+import { MorphingNav } from "../components/ui/morphing-nav";
 
 import Hero from "../components/sections/Hero";
 import About from "../components/sections/About";
@@ -12,17 +14,22 @@ import Videos from "../components/videos/Videos";
 import Contact from "../components/sections/Contact";
 import Footer from "../components/sections/Footer";
 
+type NavItem = {
+  label: string;
+  href: string;
+};
+
 export default function Portfolio() {
-  const navItems = [
-    { label: "Inicio", href: "inicio" },
-    { label: "Acerca", href: "acerca" },
-    { label: "Experiencia", href: "experiencia" },
-    { label: "Educación", href: "educacion" },
-    { label: "Skills", href: "skills" },
-    { label: "Stack", href: "stack" },
-    { label: "Proyectos", href: "proyectos" },
-    { label: "Videos", href: "videos" },
-    { label: "Contacto", href: "contacto" },
+  const navItems: NavItem[] = [
+    { label: "Inicio", href: "#inicio" },
+    { label: "Acerca", href: "#acerca" },
+    { label: "Experiencia", href: "#experiencia" },
+    { label: "Educación", href: "#educacion" },
+    { label: "Skills", href: "#skills" },
+    { label: "Stack", href: "#stack" },
+    { label: "Proyectos", href: "#proyectos" },
+    { label: "Videos", href: "#videos" },
+    { label: "Contacto", href: "#contacto" },
   ];
 
   return (
@@ -31,7 +38,9 @@ export default function Portfolio() {
       <MatrixRain />
 
       {/* Navigation */}
-      <AdvancedPillNav items={navItems} />
+      <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2">
+        <MorphingNav items={navItems} />
+      </div>
 
       {/* Content */}
       <main className="relative z-10">
