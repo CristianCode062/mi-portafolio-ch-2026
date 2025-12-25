@@ -1,13 +1,13 @@
+import { useState } from "react";
 import Portfolio from "./pages/Portfolio";
-import CustomCursor from "./components/cursor/CustomCursor";
+import DevSetupWindow from "./components/ui/DevSetupWindow";
 
-function App() {
-  return (
-    <>
-      <CustomCursor />
-      <Portfolio />
-    </>
+export default function App() {
+  const [ready, setReady] = useState(false);
+
+  return !ready ? (
+    <DevSetupWindow onComplete={() => setReady(true)} />
+  ) : (
+    <Portfolio />
   );
 }
-
-export default App;

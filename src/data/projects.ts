@@ -21,7 +21,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: 1,
-    title: "Plataforma IA Seguridad",
+    title: "Plataforma IA Detector de Patentes",
     description: "Clasificación automática de incidentes con IA y radares en tiempo real",
     longDescription: "Sistema de análisis inteligente para seguridad pública utilizando machine learning para clasificación automática de eventos capturados por radares y cámaras.",
     icon: Brain,
