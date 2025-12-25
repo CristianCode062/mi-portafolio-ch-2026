@@ -1,590 +1,99 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useMotionValue, PanInfo } from "framer-motion";
+import { 
+  FaCamera, 
+  FaImages, 
+  FaPhone, 
+  FaEnvelope, 
+  FaSafari, 
+  FaMusic, 
+  FaAppStoreIos,
+  FaCog,
+  FaWifi,
+  FaBatteryFull,
+  FaSignal,
+  FaHeart,
+  FaComment,
+  FaShare,
+  FaChevronLeft,
+  FaSearch,
+  FaClock,
+  FaMap,
+  FaCalculator,
+  FaBook
+} from "react-icons/fa";
+import { 
+  IoVideocam, 
+  IoLocationSharp,
+  IoCall,
+  IoMail,
+  IoMusicalNotes,
+  IoApps,
+  IoSettings,
+  IoHome,
+  IoChatbubbles,
+  IoCalendar,
+  IoFitness,
+  IoNewspaper
+} from "react-icons/io5";
+import { 
+  MdMessage, 
+  MdVideoLibrary,
+  MdPhotoLibrary,
+  MdContacts,
+  MdNotes,
+  MdNotifications
+} from "react-icons/md";
+import { BsFillCameraFill, BsGrid3X3Gap } from "react-icons/bs";
+import { AiFillCamera, AiFillHeart, AiOutlineCompass } from "react-icons/ai";
 
 /* ======================================================
-   TIPOS
+   VIDEOS Y CONTENIDO
 ====================================================== */
-type Metrics = {
-  latency: number;
-  jitter: number;
-  throughput: number;
-  packets: number;
-  events: number;
-  fps: number;
-  satellites: number;
-  sla: number;
-  region: "NA" | "EU" | "APAC";
-  incident: boolean;
-};
+const videos = [
+  "hcropttps://images.unsplash.com/photo-1551650975-87deedd944c3?w=500&h=900&fit=",
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&h=900&fit=crop",
+  "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&h=900&fit=crop",
+  "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&h=900&fit=crop",
+  "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&h=900&fit=crop",
+  
+];
 
-/* ======================================================
-   MÉTRICAS + INCIDENTES
-====================================================== */
-function useMetrics(): Metrics {
-  const [metrics, setMetrics] = useState<Metrics>({
-    latency: 18,
-    jitter: 2,
-    throughput: 6.2,
-    packets: 22000,
-    events: 54000,
-    fps: 60,
-    satellites: 48,
-    sla: 99.996,
-    region: "NA",
-    incident: false,
-  });
-
-  useEffect(() => {
-    let frames = 0;
-    let last = performance.now();
-
-    function fpsLoop(now: number) {
-      frames++;
-      if (now - last >= 1000) {
-        setMetrics((m) => ({ ...m, fps: frames }));
-        frames = 0;
-        last = now;
-      }
-      requestAnimationFrame(fpsLoop);
-    }
-    requestAnimationFrame(fpsLoop);
-
-    const interval = setInterval(() => {
-      const latency = 10 + Math.random() * 60;
-      const incident = latency > 45;
-
-      setMetrics((m) => ({
-        ...m,
-        latency,
-        jitter: 1 + Math.random() * 6,
-        throughput: 4.5 + Math.random() * 3,
-        packets: Math.floor(18000 + Math.random() * 12000),
-        events: Math.floor(40000 + Math.random() * 30000),
-        region: ["NA", "EU", "APAC"][Math.floor(Math.random() * 3)] as any,
-        incident,
-      }));
-    }, 1400);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return metrics;
-}
-
-/* ======================================================
-   COMPONENTE THREE.JS CANVAS
-====================================================== */
-interface ThreeSceneRef {
-  scene?: THREE.Scene;
-  renderer?: THREE.WebGLRenderer;
-  camera?: THREE.PerspectiveCamera;
-  earth?: THREE.Mesh;
-  starlinkGroup?: THREE.Group;
-  gpsGroup?: THREE.Group;
-  asteroidGroup?: THREE.Group;
-  nebula?: THREE.Points;
-  stars?: THREE.Points;
-}
+const galleryPhotos = [
+  "public\videos\telefono1.mp4",
+  "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=300&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=300&h=300&fit=crop",
+  
+];
 
 /* ======================================================
    COMPONENTE
 ====================================================== */
 export default function About() {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const metrics = useMetrics();
-  const sceneRef = useRef<ThreeSceneRef>({});
+  const [currentVideo, setCurrentVideo] = useState(0);
+  const [currentScreen, setCurrentScreen] = useState<"home" | "photos" | "gallery" | "apps">("home");
+  const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
+  const phoneRef = useRef<HTMLDivElement>(null);
+  const dragX = useMotionValue(0);
+  const [currentTime, setCurrentTime] = useState("9:41");
 
-  useEffect(() => {
-    if (!mountRef.current) return;
-
-    const container = mountRef.current;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-
-    /* ========== ESCENA ========== */
-    const scene = new THREE.Scene();
-    sceneRef.current.scene = scene;
-
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 8);
-    camera.position.y = 2;
-    sceneRef.current.camera = camera;
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-    sceneRef.current.renderer = renderer;
-
-    /* ========== TIERRA CON TEXTURA Y GEOGRAFÍA ========== */
-    const earthGeometry = new THREE.SphereGeometry(2.5, 128, 128);
-    
-    // Crear textura procedural de tierra con continentes
-    const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d')!;
-    
-    // Oceano base
-    const oceanGradient = ctx.createLinearGradient(0, 0, 0, 512);
-    oceanGradient.addColorStop(0, '#001a3d');
-    oceanGradient.addColorStop(0.5, '#0a2b52');
-    oceanGradient.addColorStop(1, '#001a3d');
-    ctx.fillStyle = oceanGradient;
-    ctx.fillRect(0, 0, 1024, 512);
-    
-    // Dibujar continentes estilizados
-    ctx.fillStyle = '#1a4d3d';
-    ctx.globalAlpha = 0.7;
-    
-    // America
-    ctx.beginPath();
-    ctx.ellipse(200, 200, 80, 120, -0.3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(220, 320, 60, 100, 0.2, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Europa/África
-    ctx.beginPath();
-    ctx.ellipse(520, 180, 70, 90, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(540, 300, 80, 110, 0.1, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Asia
-    ctx.beginPath();
-    ctx.ellipse(700, 200, 120, 100, 0, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Australia
-    ctx.beginPath();
-    ctx.ellipse(800, 380, 50, 40, 0, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Agregar brillo a los continentes
-    ctx.fillStyle = '#2d7a5f';
-    ctx.globalAlpha = 0.3;
-    ctx.beginPath();
-    ctx.ellipse(200, 190, 60, 100, -0.3, 0, Math.PI * 2);
-    ctx.fill();
-    
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.needsUpdate = true;
-    
-    const earthMaterial = new THREE.MeshPhongMaterial({
-      map: texture,
-      emissive: 0x002244,
-      emissiveIntensity: 0.2,
-      shininess: 50,
-      specular: 0x00ffff,
-      specularMap: texture,
-    });
-    
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    scene.add(earth);
-    sceneRef.current.earth = earth;
-
-    // Atmosphera glow mejorada
-    const atmosphereGeometry = new THREE.SphereGeometry(2.72, 64, 64);
-    const atmosphereMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00d9ff,
-      transparent: true,
-      opacity: 0.2,
-      side: THREE.BackSide,
-    });
-    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-    scene.add(atmosphere);
-    
-    // Glow exterior adicional
-    const glowGeometry = new THREE.SphereGeometry(2.85, 64, 64);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0099ff,
-      transparent: true,
-      opacity: 0.08,
-      side: THREE.BackSide,
-    });
-    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-    scene.add(glow);
-
-    // Wireframe más detallado
-    const wireframeGeometry = new THREE.SphereGeometry(2.53, 48, 48);
-    const wireframeMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.25,
-    });
-    const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
-    scene.add(wireframe);
-    
-    // Grid ecuatorial
-    const gridGeometry = new THREE.TorusGeometry(2.52, 0.005, 16, 100);
-    const gridMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      transparent: true,
-      opacity: 0.6,
-    });
-    const equator = new THREE.Mesh(gridGeometry, gridMaterial);
-    equator.rotation.x = Math.PI / 2;
-    scene.add(equator);
-
-    /* ========== STARLINK SATELLITES ========== */
-    const starlinkGroup = new THREE.Group();
-    const numStarlinks = 60;
-    const starlinkRadius = 3.5;
-
-    for (let i = 0; i < numStarlinks; i++) {
-      const angle = (i / numStarlinks) * Math.PI * 2;
-      const orbitTilt = ((i % 6) * 30) * (Math.PI / 180);
-
-      const satGeometry = new THREE.BoxGeometry(0.08, 0.05, 0.03);
-      const satMaterial = new THREE.MeshPhongMaterial({
-        color: 0x00ffff,
-        emissive: 0x00ffff,
-        emissiveIntensity: 0.5,
-        shininess: 100,
-      });
-      const satellite = new THREE.Mesh(satGeometry, satMaterial);
-
-      const panelGeometry = new THREE.BoxGeometry(0.15, 0.05, 0.01);
-      const panelMaterial = new THREE.MeshPhongMaterial({
-        color: 0x1a4d7a,
-        emissive: 0x0099ff,
-        emissiveIntensity: 0.3,
-      });
-      const panel1 = new THREE.Mesh(panelGeometry, panelMaterial);
-      panel1.position.x = -0.1;
-      const panel2 = new THREE.Mesh(panelGeometry, panelMaterial);
-      panel2.position.x = 0.1;
-
-      satellite.add(panel1);
-      satellite.add(panel2);
-
-      const x = starlinkRadius * Math.cos(angle) * Math.cos(orbitTilt);
-      const y = starlinkRadius * Math.sin(orbitTilt);
-      const z = starlinkRadius * Math.sin(angle) * Math.cos(orbitTilt);
-
-      satellite.position.set(x, y, z);
-      satellite.lookAt(0, 0, 0);
-      (satellite.userData as any) = {
-        angle,
-        orbitTilt,
-        radius: starlinkRadius,
-        speed: 0.001 + Math.random() * 0.001,
-      };
-
-      starlinkGroup.add(satellite);
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.x < -threshold) {
+      setCurrentVideo((prev) => (prev + 1) % videos.length);
+    } else if (info.offset.x > threshold) {
+      setCurrentVideo((prev) => (prev - 1 + videos.length) % videos.length);
     }
-    scene.add(starlinkGroup);
-    sceneRef.current.starlinkGroup = starlinkGroup;
-
-    /* ========== GPS SATELLITES ========== */
-    const gpsGroup = new THREE.Group();
-    const numGPS = 24;
-    const gpsRadius = 4.5;
-
-    for (let i = 0; i < numGPS; i++) {
-      const angle = (i / numGPS) * Math.PI * 2;
-      const orbitTilt = (((i % 4) * 90) * Math.PI) / 180;
-
-      const satGeometry = new THREE.OctahedronGeometry(0.1);
-      const satMaterial = new THREE.MeshPhongMaterial({
-        color: 0xff0080,
-        emissive: 0xff0080,
-        emissiveIntensity: 0.7,
-        shininess: 100,
-      });
-      const gpsSat = new THREE.Mesh(satGeometry, satMaterial);
-
-      const x = gpsRadius * Math.cos(angle) * Math.cos(orbitTilt);
-      const y = gpsRadius * Math.sin(orbitTilt);
-      const z = gpsRadius * Math.sin(angle) * Math.cos(orbitTilt);
-
-      gpsSat.position.set(x, y, z);
-      (gpsSat.userData as any) = {
-        angle,
-        orbitTilt,
-        radius: gpsRadius,
-        speed: 0.0008,
-      };
-
-      gpsGroup.add(gpsSat);
-    }
-    scene.add(gpsGroup);
-    sceneRef.current.gpsGroup = gpsGroup;
-
-    /* ========== LÍNEAS DE COMUNICACIÓN ========== */
-    const linesGroup = new THREE.Group();
-    scene.add(linesGroup);
-
-    function createCommLines() {
-      while (linesGroup.children.length) {
-        linesGroup.remove(linesGroup.children[0]);
-      }
-
-      const numLines = 30;
-      for (let i = 0; i < numLines; i++) {
-        const sat =
-          starlinkGroup.children[
-            Math.floor(Math.random() * starlinkGroup.children.length)
-          ];
-
-        const phi = Math.random() * Math.PI * 2;
-        const theta = Math.random() * Math.PI;
-        const x = 2.5 * Math.sin(theta) * Math.cos(phi);
-        const y = 2.5 * Math.sin(theta) * Math.sin(phi);
-        const z = 2.5 * Math.cos(theta);
-
-        const points = [];
-        points.push((sat as THREE.Mesh).position.clone());
-        points.push(new THREE.Vector3(x, y, z));
-
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({
-          color: 0x00ffff,
-          transparent: true,
-          opacity: 0.3,
-        });
-
-        const line = new THREE.Line(geometry, material);
-        linesGroup.add(line);
-      }
-    }
-    createCommLines();
-
-    /* ========== CAMPO DE ASTEROIDES ========== */
-    const asteroidGroup = new THREE.Group();
-    const numAsteroids = 100;
-
-    for (let i = 0; i < numAsteroids; i++) {
-      const size = 0.02 + Math.random() * 0.08;
-      const geometry = new THREE.DodecahedronGeometry(size, 0);
-      const material = new THREE.MeshPhongMaterial({
-        color: 0x666666,
-        emissive: 0x111111,
-      });
-      const asteroid = new THREE.Mesh(geometry, material);
-
-      const distance = 6 + Math.random() * 4;
-      const angle = Math.random() * Math.PI * 2;
-      const height = (Math.random() - 0.5) * 5;
-
-      asteroid.position.x = distance * Math.cos(angle);
-      asteroid.position.z = distance * Math.sin(angle);
-      asteroid.position.y = height;
-
-      (asteroid.userData as any) = {
-        rotationSpeed: {
-          x: (Math.random() - 0.5) * 0.02,
-          y: (Math.random() - 0.5) * 0.02,
-          z: (Math.random() - 0.5) * 0.02,
-        },
-      };
-
-      asteroidGroup.add(asteroid);
-    }
-    scene.add(asteroidGroup);
-    sceneRef.current.asteroidGroup = asteroidGroup;
-
-    /* ========== PARTÍCULAS DE NEBULOSA ========== */
-    const nebulaGeometry = new THREE.BufferGeometry();
-    const nebulaCount = 3000;
-    const nebulaPositions = new Float32Array(nebulaCount * 3);
-    const nebulaColors = new Float32Array(nebulaCount * 3);
-
-    for (let i = 0; i < nebulaCount * 3; i += 3) {
-      nebulaPositions[i] = (Math.random() - 0.5) * 30;
-      nebulaPositions[i + 1] = (Math.random() - 0.5) * 30;
-      nebulaPositions[i + 2] = (Math.random() - 0.5) * 30;
-
-      const color = Math.random();
-      if (color < 0.5) {
-        nebulaColors[i] = 0;
-        nebulaColors[i + 1] = 1;
-        nebulaColors[i + 2] = 1;
-      } else {
-        nebulaColors[i] = 1;
-        nebulaColors[i + 1] = 0;
-        nebulaColors[i + 2] = 0.5;
-      }
-    }
-
-    nebulaGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(nebulaPositions, 3)
-    );
-    nebulaGeometry.setAttribute(
-      "color",
-      new THREE.BufferAttribute(nebulaColors, 3)
-    );
-
-    const nebulaMaterial = new THREE.PointsMaterial({
-      size: 0.05,
-      transparent: true,
-      opacity: 0.6,
-      vertexColors: true,
-      blending: THREE.AdditiveBlending,
-    });
-
-    const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
-    scene.add(nebula);
-    sceneRef.current.nebula = nebula;
-
-    /* ========== ESTRELLAS ========== */
-    const starsGeometry = new THREE.BufferGeometry();
-    const starsCount = 5000;
-    const starsPositions = new Float32Array(starsCount * 3);
-
-    for (let i = 0; i < starsCount * 3; i++) {
-      starsPositions[i] = (Math.random() - 0.5) * 50;
-    }
-
-    starsGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(starsPositions, 3)
-    );
-    const starsMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.03,
-      transparent: true,
-      opacity: 0.8,
-    });
-    const stars = new THREE.Points(starsGeometry, starsMaterial);
-    scene.add(stars);
-    sceneRef.current.stars = stars;
-
-    /* ========== LUCES MEJORADAS ========== */
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    sunLight.position.set(5, 3, 5);
-    scene.add(sunLight);
-
-    const fillLight = new THREE.PointLight(0x00ffff, 1.2, 100);
-    fillLight.position.set(-5, 2, 5);
-    scene.add(fillLight);
-
-    const backLight = new THREE.PointLight(0xff0080, 1, 100);
-    backLight.position.set(-10, -5, -10);
-    scene.add(backLight);
-    
-    // Luz rimlight para el borde de la tierra
-    const rimLight = new THREE.PointLight(0x00d9ff, 0.8, 50);
-    rimLight.position.set(0, 0, -8);
-    scene.add(rimLight);
-
-    /* ========== INTERACCIÓN DEL MOUSE ========== */
-    let targetRotationX = 0;
-    let targetRotationY = 0;
-    let currentRotationX = 0;
-    let currentRotationY = 0;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      targetRotationX = (e.clientY / window.innerHeight - 0.5) * 0.5;
-      targetRotationY = (e.clientX / window.innerWidth - 0.5) * 0.5;
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-
-    /* ========== ANIMACIÓN PRINCIPAL ========== */
-    let time = 0;
-    let lineUpdateCounter = 0;
-    let animationId: number;
-
-    function animate() {
-      animationId = requestAnimationFrame(animate);
-      time += 0.01;
-
-      earth.rotation.y += 0.002;
-      wireframe.rotation.y += 0.002;
-
-      atmosphere.scale.set(
-        1 + Math.sin(time * 0.5) * 0.03,
-        1 + Math.sin(time * 0.5) * 0.03,
-        1 + Math.sin(time * 0.5) * 0.03
-      );
-
-      starlinkGroup.children.forEach((sat) => {
-        const data = (sat as any).userData;
-        data.angle += data.speed;
-        const x = data.radius * Math.cos(data.angle) * Math.cos(data.orbitTilt);
-        const y = data.radius * Math.sin(data.orbitTilt);
-        const z = data.radius * Math.sin(data.angle) * Math.cos(data.orbitTilt);
-        sat.position.set(x, y, z);
-        (sat as THREE.Mesh).lookAt(0, 0, 0);
-        sat.rotation.z += 0.05;
-      });
-
-      gpsGroup.children.forEach((sat) => {
-        const data = (sat as any).userData;
-        data.angle += data.speed;
-        const x = data.radius * Math.cos(data.angle) * Math.cos(data.orbitTilt);
-        const y = data.radius * Math.sin(data.orbitTilt);
-        const z = data.radius * Math.sin(data.angle) * Math.cos(data.orbitTilt);
-        sat.position.set(x, y, z);
-        sat.rotation.x += 0.02;
-        sat.rotation.y += 0.03;
-      });
-
-      lineUpdateCounter++;
-      if (lineUpdateCounter > 60) {
-        createCommLines();
-        lineUpdateCounter = 0;
-      }
-
-      asteroidGroup.children.forEach((asteroid) => {
-        const data = (asteroid as any).userData;
-        asteroid.rotation.x += data.rotationSpeed.x;
-        asteroid.rotation.y += data.rotationSpeed.y;
-        asteroid.rotation.z += data.rotationSpeed.z;
-      });
-
-      nebula.rotation.y += 0.0002;
-      nebula.rotation.x += 0.0001;
-
-      starsMaterial.opacity = 0.6 + Math.sin(time * 0.5) * 0.2;
-
-      currentRotationX += (targetRotationX - currentRotationX) * 0.05;
-      currentRotationY += (targetRotationY - currentRotationY) * 0.05;
-
-      camera.position.x = Math.sin(currentRotationY * 2) * 8;
-      camera.position.y = currentRotationX * 4 + 2;
-      camera.position.z = Math.cos(currentRotationY * 2) * 8;
-      camera.lookAt(0, 0, 0);
-
-      renderer.render(scene, camera);
-    }
-
-    animate();
-
-    /* ========== RESPONSIVO ========== */
-    const handleResize = () => {
-      const newWidth = container.clientWidth;
-      const newHeight = container.clientHeight;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationId);
-      renderer.dispose();
-      if (container && renderer.domElement.parentNode === container) {
-        container.removeChild(renderer.domElement);
-      }
-    };
-  }, []);
+    dragX.set(0);
+  };
 
   return (
     <section className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-black overflow-hidden">
@@ -592,59 +101,476 @@ export default function About() {
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent z-10"></div>
 
       <div className="relative grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-        {/* Canvas 3D - Izquierda */}
-        <div 
-          ref={mountRef} 
-          className="relative w-full h-screen"
-        >
-          {/* Indicador de Métricas */}
+        {/* iPhone 3D - Izquierda */}
+        <div className="relative w-full h-screen flex items-center justify-center p-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            ref={phoneRef}
+            initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
+            whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className={`absolute bottom-8 left-8 backdrop-blur-xl border rounded-xl p-5 text-xs z-20 transition-all shadow-2xl ${
-              metrics.incident
-                ? "bg-red-950/80 border-red-500/50"
-                : "bg-slate-900/80 border-cyan-500/30"
-            }`}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="relative"
+            style={{ perspective: "2000px" }}
           >
-            <div className="font-semibold tracking-wider uppercase text-xs text-slate-400 mb-2">
-              Latency
-            </div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-3">
-              {metrics.latency.toFixed(1)} <span className="text-lg">ms</span>
-            </div>
-            <div className="text-xs space-y-1 text-slate-400">
-              <div>Region: {metrics.region}</div>
-              <div>FPS: {metrics.fps}</div>
-            </div>
-            {metrics.incident && (
-              <div className="pt-3 mt-3 border-t border-red-500/30 font-bold tracking-widest text-red-400 animate-pulse text-xs">
-                ⚠ INCIDENT DETECTED
+            {/* Cuerpo del iPhone */}
+            <motion.div
+              animate={{ 
+                rotateY: [0, 3, -3, 0],
+                rotateX: [0, 1, -1, 0]
+              }}
+              transition={{ 
+                duration: 8, 
+                repeat: Infinity, 
+                ease: "easeInOut" 
+              }}
+              className="relative w-[380px] h-[780px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[60px] shadow-2xl border-[10px] border-slate-700"
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              {/* Dynamic Island */}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-8 bg-black rounded-full z-20 flex items-center justify-center gap-2">
+                <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
+                <div className="w-3 h-3 bg-slate-800 rounded-full"></div>
               </div>
-            )}
+
+              {/* Pantalla del iPhone */}
+              <div className="absolute inset-[14px] bg-black rounded-[50px] overflow-hidden">
+                
+                {/* PANTALLA HOME */}
+                {currentScreen === "home" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="w-full h-full relative"
+                  >
+                    {/* Status Bar */}
+                    <div className="absolute top-0 left-0 right-0 h-12 flex items-center justify-between px-8 pt-3 text-white text-xs font-semibold z-30">
+                      <span>{currentTime}</span>
+                      <div className="flex gap-2 items-center">
+                        <FaSignal className="text-xs" />
+                        <FaWifi className="text-xs" />
+                        <FaBatteryFull className="text-base" />
+                      </div>
+                    </div>
+
+                    {/* Contenido principal - Videos deslizables */}
+                    <motion.div
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.2}
+                      onDragEnd={handleDragEnd}
+                      style={{ x: dragX }}
+                      className="w-full h-full"
+                    >
+                      {videos.map((video, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0 }}
+                          animate={{ 
+                            opacity: currentVideo === index ? 1 : 0,
+                            scale: currentVideo === index ? 1 : 0.95
+                          }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute inset-0"
+                        >
+                          <img 
+                            src={video} 
+                            alt={`Content ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            draggable={false}
+                          />
+                          
+                          {/* Overlay gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
+                          
+                          {/* UI elements sobre el video */}
+                          <div className="absolute top-20 right-4 flex flex-col gap-5 z-10">
+                            <motion.div
+                              whileTap={{ scale: 0.9 }}
+                              className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white cursor-pointer"
+                            >
+                              <FaHeart className="text-2xl text-red-400" />
+                            </motion.div>
+                            <motion.div
+                              whileTap={{ scale: 0.9 }}
+                              className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white cursor-pointer"
+                            >
+                              <FaComment className="text-2xl" />
+                            </motion.div>
+                            <motion.div
+                              whileTap={{ scale: 0.9 }}
+                              className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white cursor-pointer"
+                            >
+                              <FaShare className="text-2xl" />
+                            </motion.div>
+                          </div>
+
+                          {/* Info en la parte inferior */}
+                          <div className="absolute bottom-24 left-4 right-20 z-10">
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.2 }}
+                              className="text-white"
+                            >
+                              <p className="font-bold text-base mb-2">@tech.innovator</p>
+                              <p className="text-sm opacity-90 line-clamp-2">
+                                Innovación tecnológica en sistemas críticos y tiempo real 🚀
+                              </p>
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+
+                    {/* Indicador de swipe */}
+                    <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
+                      {videos.map((_, index) => (
+                        <motion.div
+                          key={index}
+                          animate={{
+                            scale: currentVideo === index ? 1.3 : 1,
+                            backgroundColor: currentVideo === index ? "#06b6d4" : "#64748b"
+                          }}
+                          className="w-2 h-2 rounded-full"
+                        />
+                      ))}
+                    </div>
+
+                    {/* Dock de iOS */}
+                    <motion.div 
+                      className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-20 bg-white/10 backdrop-blur-2xl rounded-3xl flex items-center justify-around px-4 z-30"
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("photos")}
+                        className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaCamera className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("gallery")}
+                        className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <MdPhotoLibrary className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("apps")}
+                        className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <BsGrid3X3Gap className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaMusic className="text-white text-2xl" />
+                      </motion.button>
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* PANTALLA FOTOS */}
+                {currentScreen === "photos" && (
+                  <motion.div
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "100%" }}
+                    transition={{ type: "spring", damping: 30 }}
+                    className="w-full h-full bg-black relative"
+                  >
+                    {/* Header */}
+                    <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 pt-4 z-30">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setCurrentScreen("home")}
+                        className="text-cyan-400 text-lg font-semibold flex items-center gap-2"
+                      >
+                        <FaChevronLeft /> Atrás
+                      </motion.button>
+                      <span className="text-white font-bold text-xl">Fotos</span>
+                      <FaSearch className="text-white text-lg" />
+                    </div>
+
+                    {/* Grid de fotos */}
+                    <div className="pt-24 pb-28 px-4 h-full overflow-y-auto">
+                      <div className="grid grid-cols-3 gap-2">
+                        {galleryPhotos.map((photo, index) => (
+                          <motion.div
+                            key={index}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setSelectedPhoto(index)}
+                            className="aspect-square rounded-lg overflow-hidden cursor-pointer"
+                          >
+                            <img 
+                              src={photo} 
+                              alt={`Photo ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Dock */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-20 bg-white/10 backdrop-blur-2xl rounded-3xl flex items-center justify-around px-4 z-30">
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("home")}
+                        className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <IoHome className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("gallery")}
+                        className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <MdPhotoLibrary className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <MdMessage className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaMusic className="text-white text-2xl" />
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* PANTALLA GALERÍA */}
+                {currentScreen === "gallery" && (
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    className="w-full h-full bg-gradient-to-br from-slate-900 to-black relative"
+                  >
+                    {/* Header */}
+                    <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 pt-4 z-30">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setCurrentScreen("home")}
+                        className="text-cyan-400 text-lg font-semibold flex items-center gap-2"
+                      >
+                        <FaChevronLeft /> Atrás
+                      </motion.button>
+                      <span className="text-white font-bold text-xl">Álbumes</span>
+                      <FaSearch className="text-white text-lg" />
+                    </div>
+
+                    {/* Contenido de galería */}
+                    <div className="pt-24 pb-28 px-6 h-full overflow-y-auto">
+                      <div className="space-y-3">
+                        {galleryPhotos.slice(0, 4).map((photo, index) => (
+                          <motion.div
+                            key={index}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full h-48 rounded-2xl overflow-hidden shadow-xl"
+                          >
+                            <img 
+                              src={photo} 
+                              alt={`Gallery ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Dock */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-20 bg-white/10 backdrop-blur-2xl rounded-3xl flex items-center justify-around px-4 z-30">
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("home")}
+                        className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <IoHome className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("photos")}
+                        className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaCamera className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <MdMessage className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaMusic className="text-white text-2xl" />
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* PANTALLA APPS */}
+                {currentScreen === "apps" && (
+                  <motion.div
+                    initial={{ scale: 1.1, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 1.1, opacity: 0 }}
+                    className="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative"
+                  >
+                    {/* Status Bar */}
+                    <div className="absolute top-0 left-0 right-0 h-12 flex items-center justify-between px-8 pt-3 text-white text-xs font-semibold z-30">
+                      <span>{currentTime}</span>
+                      <div className="flex gap-2 items-center">
+                        <FaSignal className="text-xs" />
+                        <FaWifi className="text-xs" />
+                        <FaBatteryFull className="text-base" />
+                      </div>
+                    </div>
+
+                    {/* Grid de Apps estilo iOS */}
+                    <div className="pt-16 pb-28 px-6 h-full overflow-y-auto">
+                      <div className="grid grid-cols-4 gap-4">
+                        {/* Fila 1 */}
+                        <AppIcon icon={<FaPhone />} label="Teléfono" color="from-green-400 to-green-600" />
+                        <AppIcon icon={<FaSafari />} label="Safari" color="from-blue-400 to-blue-600" />
+                        <AppIcon icon={<MdMessage />} label="Mensajes" color="from-green-400 to-green-500" />
+                        <AppIcon icon={<FaEnvelope />} label="Mail" color="from-blue-500 to-blue-700" />
+                        
+                        {/* Fila 2 */}
+                        <AppIcon icon={<FaMusic />} label="Música" color="from-red-400 to-pink-500" />
+                        <AppIcon icon={<MdPhotoLibrary />} label="Fotos" color="from-red-400 to-orange-500" onClick={() => setCurrentScreen("photos")} />
+                        <AppIcon icon={<FaCamera />} label="Cámara" color="from-gray-600 to-gray-800" onClick={() => setCurrentScreen("gallery")} />
+                        <AppIcon icon={<IoCalendar />} label="Calendario" color="from-white to-gray-200" textColor="text-red-500" />
+                        
+                        {/* Fila 3 */}
+                        <AppIcon icon={<IoLocationSharp />} label="Mapas" color="from-blue-400 to-green-400" />
+                        <AppIcon icon={<FaClock />} label="Reloj" color="from-gray-800 to-black" />
+                        <AppIcon icon={<MdNotes />} label="Notas" color="from-yellow-300 to-yellow-500" />
+                        <AppIcon icon={<MdNotifications  />} label="Recordatorios" color="from-blue-400 to-blue-600" />
+                        
+                        {/* Fila 4 */}
+                        <AppIcon icon={<FaAppStoreIos />} label="App Store" color="from-blue-500 to-blue-700" />
+                        <AppIcon icon={<FaBook />} label="Libros" color="from-orange-400 to-red-500" />
+                        <AppIcon icon={<MdContacts />} label="Contactos" color="from-gray-500 to-gray-700" />
+                        <AppIcon icon={<FaCog />} label="Ajustes" color="from-gray-600 to-gray-800" />
+                        
+                        {/* Fila 5 */}
+                        <AppIcon icon={<FaCalculator />} label="Calculadora" color="from-gray-700 to-gray-900" />
+                        <AppIcon icon={<IoFitness />} label="Salud" color="from-red-400 to-pink-500" />
+                        <AppIcon icon={<IoNewspaper />} label="Noticias" color="from-red-500 to-pink-500" />
+                        <AppIcon icon={<AiOutlineCompass />} label="Brújula" color="from-gray-700 to-black" />
+                      </div>
+
+                      {/* Buscador Spotlight */}
+                      <div className="mt-8 bg-white/10 backdrop-blur-xl rounded-2xl px-4 py-3 flex items-center gap-3">
+                        <FaSearch className="text-white/60 text-lg" />
+                        <span className="text-white/60">Buscar</span>
+                      </div>
+                    </div>
+
+                    {/* Dock */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-20 bg-white/10 backdrop-blur-2xl rounded-3xl flex items-center justify-around px-4 z-30">
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("home")}
+                        className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <IoHome className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => setCurrentScreen("photos")}
+                        className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaCamera className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <MdMessage className="text-white text-2xl" />
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
+                      >
+                        <FaMusic className="text-white text-2xl" />
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Modal de foto seleccionada */}
+                {selectedPhoto !== null && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setSelectedPhoto(null)}
+                    className="absolute inset-0 bg-black/95 z-40 flex items-center justify-center"
+                  >
+                    <img 
+                      src={galleryPhotos[selectedPhoto]} 
+                      alt="Selected"
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Botones físicos del iPhone */}
+              <div className="absolute left-[-10px] top-32 w-1 h-16 bg-slate-600 rounded-l-sm"></div>
+              <div className="absolute left-[-10px] top-52 w-1 h-12 bg-slate-600 rounded-l-sm"></div>
+              <div className="absolute left-[-10px] top-68 w-1 h-12 bg-slate-600 rounded-l-sm"></div>
+              <div className="absolute right-[-10px] top-40 w-1 h-20 bg-slate-600 rounded-r-sm"></div>
+            </motion.div>
+
+            {/* Efectos de brillo */}
+            <motion.div
+              animate={{
+                opacity: [0.2, 0.5, 0.2],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-transparent to-blue-500/20 rounded-[60px] blur-2xl -z-10"
+            ></motion.div>
           </motion.div>
 
-          {/* Iconos de satélites decorativos */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="absolute top-32 left-12 text-cyan-400/40 text-7xl z-10"
-          >
-            📡
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.7 }}
-            className="absolute bottom-32 right-12 text-cyan-400/40 text-6xl z-10"
-          >
-            🛰️
-          </motion.div>
+          {/* Partículas flotantes */}
+          {[...Array(30)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ 
+                x: Math.random() * 600 - 300, 
+                y: Math.random() * 800 - 400,
+                opacity: 0 
+              }}
+              animate={{
+                y: [null, Math.random() * -150 - 100],
+                opacity: [0, 0.8, 0]
+              }}
+              transition={{
+                duration: Math.random() * 4 + 3,
+                repeat: Infinity,
+                delay: Math.random() * 3
+              }}
+              className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+            ></motion.div>
+          ))}
         </div>
 
         {/* Contenido de texto - Derecha */}
@@ -758,5 +684,37 @@ export default function About() {
       {/* Barra roja inferior */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
     </section>
+  );
+}
+
+// Componente de App Icon
+function AppIcon({ 
+  icon, 
+  label, 
+  color, 
+  textColor = "text-white",
+  onClick 
+}: { 
+  icon: React.ReactNode; 
+  label: string; 
+  color: string; 
+  textColor?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <motion.div
+      whileTap={{ scale: 0.85 }}
+      onClick={onClick}
+      className="flex flex-col items-center gap-1 cursor-pointer"
+    >
+      <div className={`w-14 h-14 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg ${textColor}`}>
+        <div className="text-2xl">
+          {icon}
+        </div>
+      </div>
+      <span className="text-white text-[10px] text-center leading-tight max-w-[60px]">
+        {label}
+      </span>
+    </motion.div>
   );
 }

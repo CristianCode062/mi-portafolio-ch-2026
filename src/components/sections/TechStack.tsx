@@ -130,7 +130,7 @@ export default function TechStack() {
                       }}
                       whileHover={{
                         scale: 1.1,
-                        transition: { duration: 0.3 },
+                        transition: { duration: 0.8 },
                       }}
                       className="group/icon relative"
                     >
@@ -189,7 +189,7 @@ export default function TechStack() {
       </div>
 
       {/* Barra roja decorativa al final de la sección */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
     </section>
   );
 }

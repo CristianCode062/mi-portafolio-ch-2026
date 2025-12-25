@@ -14,6 +14,7 @@ import Videos from "../components/videos/Videos";
 import Contact from "../components/sections/Contact";
 import Footer from "../components/sections/Footer";
 
+
 type NavItem = {
   label: string;
   href: string;
@@ -27,6 +28,7 @@ export default function Portfolio() {
     { label: "Educación", href: "#educacion" },
     { label: "Skills", href: "#skills" },
     { label: "Stack", href: "#stack" },
+    { label: "Patentes", href: "#patentes" },
     { label: "Proyectos", href: "#proyectos" },
     { label: "Videos", href: "#videos" },
     { label: "Contacto", href: "#contacto" },
