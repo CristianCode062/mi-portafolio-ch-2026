@@ -5,18 +5,18 @@ export const projects = [
     id: 1,
     title: "Detección de Patentes en Tiempo Real",
     description:
-      "Sistema de visión computacional que detecta y reconoce patentes vehiculares usando IA en tiempo real.",
+      "Sistema de Control patenes verifica cada vehiculo con su informacion que registra la base de datos.",
     video: "/videos/patentes.mp4",
     featured: true,
-    color: "#EF4444",
+    color: "#00ff2aff",
     icon: Eye,
   },
   {
     id: 2,
-    title: "Monitoreo Inteligente de Tráfico",
+    title: "Monitoreo Inteligente de Animales",
     description:
       "Plataforma de análisis urbano con cámaras inteligentes y procesamiento en el borde.",
-    video: "/videos/patentes.mp4",
+    video: "/videos/detector_animales.mp4",
     featured: true,
     color: "#EF4444",
     icon: Radar,

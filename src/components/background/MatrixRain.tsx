@@ -11,7 +11,7 @@ export default function MatrixRain() {
 
     // Caracteres expandidos con más katakana, kanji y símbolos
     const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン田中山本木村佐藤高橋CRISTIAN</>CODE{};[]";
-    const fontSize = 16;
+    const fontSize = 56;
     const columns = canvas.width / fontSize;
     const drops: number[] = [];
     const speeds: number[] = [];

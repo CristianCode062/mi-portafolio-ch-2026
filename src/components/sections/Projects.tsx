@@ -217,7 +217,7 @@ function FeaturedProject({
       initial={{ opacity: 0, y: 100 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 1, delay: index * 0.3, ease: [0.6, 0.05, 0.01, 0.9] }}
-      className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-20 pb-12"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center "
     >
       {/* VIDEO */}
       <motion.div
@@ -233,7 +233,7 @@ function FeaturedProject({
             scale: isHovered ? [1, 1.08, 1] : 1,
           }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="absolute -inset-4 bg-gradient-to-r from-red-500 via-purple-500 to-pink-500 rounded-3xl blur-2xl"
+          className="absolute -inset-4 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 rounded-3xl blur-2xl"
         />
         
         <motion.div
@@ -242,7 +242,7 @@ function FeaturedProject({
             rotate: [0, 360],
           }}
           transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" } }}
-          className="absolute -inset-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-3xl blur-xl opacity-0"
+          className="absolute -inset-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-green-500 rounded-4xl blur-xl opacity-0"
         />
 
         {/* VIDEO CONTAINER */}
