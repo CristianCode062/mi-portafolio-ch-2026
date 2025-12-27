@@ -17,8 +17,8 @@ export default function TechStack() {
   // Auto-avanzar cada 2 segundos
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % techStack.length);
-    }, 2000);
+      setCurrentIndex((prev) => (prev + 2) % techStack.length);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -53,7 +53,7 @@ export default function TechStack() {
           className="mb-12"
         >
           <span className="text-red-400 text-sm font-medium">
-            ¿Qué buscas?
+            ¿Quieres Saber con Que lenguajes he trabajo?
           </span>
         </motion.div>
 
