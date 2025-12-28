@@ -10,7 +10,7 @@ import Education from "../components/sections/Education";
 import Skills from "../components/sections/Skills";
 import TechStack from "../components/sections/TechStack";
 import Projects from "../components/sections/Projects";
-import Videos from "../components/videos/Videos";
+import Videos from "../components/sections/Photos";
 import Contact from "../components/sections/Contact";
 import Footer from "../components/sections/Footer";
 

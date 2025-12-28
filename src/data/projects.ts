@@ -23,10 +23,10 @@ export const projects = [
   },
   {
     id: 3,
-    title: "Monitoreo Inteligente de Tráfico",
+    title: "Mouse Virtual Gestos con la Mano",
     description:
-      "Plataforma de análisis urbano con cámaras inteligentes y procesamiento en el borde.",
-    video: "/videos/patentes.mp4",
+      "Sistema basado en manejar el computador con los de dos a traves de gestos ",
+    video: "/videos/mousevirtual.mp4",
     featured: true,
     color: "#EF4444",
     icon: Radar,
