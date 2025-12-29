@@ -1,112 +1,168 @@
-import { motion, Variants } from "framer-motion";
-import { GraduationCap, Cpu, Workflow } from "lucide-react";
-import { education } from "../../data/education";
+import React from "react";
 
-/* ---------------- Animations ---------------- */
+/* =========================
+   CONTENEDOR BASE (Glass)
+========================= */
+const GlassCard = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div
+    className="
+      rounded-2xl
+      border border-white/10
+      bg-white/5
+      backdrop-blur-xl
+      p-6
+      transition-all
+      hover:border-cyan-400/40
+    "
+  >
+    <h3 className="text-xl font-semibold text-white mb-4">{title}</h3>
+    {children}
+  </div>
+);
 
-const container: Variants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.25 },
-  },
-};
-
-const card: Variants = {
-  hidden: { opacity: 0, y: 50, scale: 0.96 },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.8,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  },
-};
-
-/* ---------------- Icon map ---------------- */
-
-const iconByType = {
-  degree: {
-    icon: <GraduationCap size={20} />,
-    color: "text-cyan-400 bg-cyan-400/10",
-  },
-  secondary: {
-    icon: <Cpu size={20} />,
-    color: "text-blue-400 bg-blue-400/10",
-  },
-  course: {
-    icon: <Workflow size={20} />,
-    color: "text-emerald-400 bg-emerald-400/10",
-  },
-};
-
-/* ---------------- Component ---------------- */
-
-export default function EducationCards() {
-  return (
-    <section id="educacion" className="relative px-6 py-32">
-      {/* Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-[120px]" />
+/* =========================
+   EDUCACIÓN
+========================= */
+const Education = () => (
+  <GlassCard title="Educación">
+    <div className="space-y-4 text-sm text-gray-300">
+      <div>
+        <p className="font-semibold text-white">Ingeniería Informática</p>
+        <p>Universidad Santo Tomás · 2016 – 2021</p>
       </div>
 
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.9 }}
-        className="mx-auto mb-20 max-w-4xl text-center"
-      >
-        <h2 className="text-5xl font-bold tracking-tight">Educación</h2>
-        <p className="mt-6 text-lg text-slate-400">
-          Formación académica y especialización continua orientada a ingeniería
-          de software, sistemas y automatización.
+      <div>
+        <p className="font-semibold text-white">
+          Educación Media Técnico Profesional
         </p>
-      </motion.div>
+        <p>Liceo Politécnico Holanda · 2010 – 2013</p>
+      </div>
 
-      {/* Cards */}
-      <motion.div
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-120px" }}
-        className="mx-auto grid max-w-6xl gap-10 md:grid-cols-3"
-      >
-        {education.slice(0, 3).map((e, i) => {
-          const meta = iconByType[e.type];
+      <div>
+        <p className="font-semibold text-white">
+          Automatización e Inteligencia Artificial
+        </p>
+        <p>n8n · 2025</p>
+      </div>
+    </div>
+  </GlassCard>
+);
 
-          return (
-            <motion.article
-              key={i}
-              variants={card}
-              whileHover={{ y: -8 }}
-              className="group relative rounded-3xl border border-white/10 bg-slate-900/70 p-8 backdrop-blur-xl"
-            >
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+/* =========================
+   PERFIL
+========================= */
+const Profile = () => (
+  <GlassCard title="Perfil Profesional">
+    <p className="text-sm text-gray-300 leading-relaxed">
+      Desarrollador Fullstack con formación en ingeniería informática,
+      orientado a la creación de soluciones escalables, automatización
+      de procesos y buenas prácticas de desarrollo. Enfocado en la
+      mejora continua y en entregar valor real mediante software.
+    </p>
+  </GlassCard>
+);
 
-              {/* Icon */}
-              <div
-                className={`relative mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl ${meta.color}`}
-              >
-                {meta.icon}
-              </div>
+/* =========================
+   METAS
+========================= */
+const Goals = () => (
+  <GlassCard title="Metas Profesionales">
+    <p className="text-sm text-gray-300 leading-relaxed">
+      Consolidarme como desarrollador senior, participar en proyectos
+      de alto impacto tecnológico y especializarme en arquitectura de
+      software, automatización e inteligencia artificial aplicada a
+      procesos reales.
+    </p>
+  </GlassCard>
+);
 
-              {/* Content */}
-              <h3 className="relative text-xl font-semibold">{e.title}</h3>
-              <p className="relative mt-1 text-sm text-slate-400">
-                {e.institution} · {e.period}
-              </p>
+/* =========================
+   HABILIDADES CLAVES (BLANDAS + PERSONALES)
+========================= */
+const KeySkills = () => (
+  <GlassCard title="Habilidades Claves">
+    <ul className="space-y-2 text-sm text-gray-300">
+      <li>✔ Pensamiento analítico y resolución de problemas</li>
+      <li>✔ Autonomía y aprendizaje autodidacta</li>
+      <li>✔ Comunicación efectiva con equipos técnicos y de negocio</li>
+      <li>✔ Responsabilidad y compromiso profesional</li>
+      <li>✔ Capacidad de adaptación a nuevos desafíos</li>
+      <li>✔ Enfoque en calidad, buenas prácticas y mejora continua</li>
+    </ul>
+  </GlassCard>
+);
 
-              <p className="relative mt-5 text-slate-300 leading-relaxed">
-                {e.description}
-              </p>
-            </motion.article>
-          );
-        })}
-      </motion.div>
+/* =========================
+   HABILIDADES DURAS
+========================= */
+const HardSkills = () => (
+  <GlassCard title="Habilidades Duras">
+    <div className="space-y-3 text-sm text-gray-300">
+      <p>
+        <span className="text-white font-semibold">Frontend:</span>{" "}
+        React, Angular, Tailwind CSS
+      </p>
+      <p>
+        <span className="text-white font-semibold">Backend:</span>{" "}
+        Node.js, Java
+      </p>
+      <p>
+        <span className="text-white font-semibold">Bases de Datos:</span>{" "}
+        PostgreSQL, MongoDB
+      </p>
+      <p>
+        <span className="text-white font-semibold">Arquitectura:</span>{" "}
+        APIs REST, Microservicios
+      </p>
+      <p>
+        <span className="text-white font-semibold">DevOps:</span>{" "}
+        Docker, Git, CI/CD
+      </p>
+      <p>
+        <span className="text-white font-semibold">Automatización:</span>{" "}
+        n8n, Integración de APIs, IA
+      </p>
+    </div>
+  </GlassCard>
+);
+
+/* =========================
+   SECCIÓN PRINCIPAL
+========================= */
+const EducationSkillsSection = () => {
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-20">
+      <h2 className="text-4xl font-bold text-white mb-4">
+        Educación & Competencias
+      </h2>
+
+      <p className="text-gray-400 mb-12 max-w-3xl">
+        Formación académica, habilidades técnicas y competencias clave
+        que respaldan mi desarrollo como ingeniero de software.
+      </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* IZQUIERDA */}
+        <div className="lg:col-span-2 space-y-8">
+          <Education />
+          <Profile />
+          <Goals />
+        </div>
+
+        {/* DERECHA */}
+        <div className="lg:col-span-1 space-y-8">
+          <KeySkills />
+          <HardSkills />
+        </div>
+      </div>
     </section>
   );
-}
+};
+
+export default EducationSkillsSection;

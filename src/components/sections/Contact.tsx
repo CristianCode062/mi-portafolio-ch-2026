@@ -221,32 +221,32 @@ Responde SOLO con "EMAIL_SENT_SUCCESS" si funcionó correctamente, o describe el
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="relative z-10 container mx-auto px-6 py-20 lg:py-28"
+        className="relative z-10 container mx-auto px-4 py-12 lg:py-16"
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           
-          <motion.div variants={itemVariants} className="text-center mb-20 lg:mb-24">
+          <motion.div variants={itemVariants} className="text-center mb-12 lg:mb-16">
             <div className="flex flex-col items-center">
               <motion.div 
                 initial={{ width: 0 }}
-                animate={{ width: "80px" }}
+                animate={{ width: "60px" }}
                 transition={{ duration: 1, delay: 0.5 }}
-                className="h-[2px] bg-indigo-500 mb-6"
+                className="h-[2px] bg-indigo-500 mb-4"
               />
-              <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 italic uppercase">
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 italic uppercase">
                 Hablemos.
               </h1>
-              <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
+              <p className="text-base md:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed font-light">
                 Disponible para consultoría estratégica, desarrollo de productos de alto rendimiento y liderazgo de ingeniería.
               </p>
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-start">
             
-            <motion.div variants={itemVariants} className="lg:col-span-5 space-y-10">
-              <div className="space-y-4">
-                <h2 className="text-xs font-bold text-indigo-400 uppercase tracking-[0.4em] mb-8">Información Directa</h2>
+            <motion.div variants={itemVariants} className="lg:col-span-5 space-y-6">
+              <div className="space-y-3">
+                <h2 className="text-xs font-bold text-indigo-400 uppercase tracking-[0.4em] mb-6">Información Directa</h2>
                 
                 <div 
                   onClick={() => copyToClipboard("dev@tuportfolio.com")}
@@ -278,9 +278,9 @@ Responde SOLO con "EMAIL_SENT_SUCCESS" si funcionó correctamente, o describe el
                 />
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ecosistema Digital</p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-3">
                   <SocialButton icon={<Linkedin />} label="LinkedIn" color="hover:bg-blue-600/20" />
                   <SocialButton icon={<Github />} label="GitHub" color="hover:bg-slate-600/20" />
                 </div>
@@ -292,7 +292,7 @@ Responde SOLO con "EMAIL_SENT_SUCCESS" si funcionó correctamente, o describe el
               className="lg:col-span-7"
               onMouseMove={handleMouseMove}
             >
-              <div className="relative group overflow-hidden rounded-[2.5rem] bg-slate-900/40 backdrop-blur-3xl border border-white/5 p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+              <div className="relative group overflow-hidden rounded-3xl bg-slate-900/40 backdrop-blur-3xl border border-white/5 p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                 
                 <motion.div
                   className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -359,8 +359,8 @@ Responde SOLO con "EMAIL_SENT_SUCCESS" si funcionó correctamente, o describe el
                   )}
                 </AnimatePresence>
 
-                <div className="relative z-10 space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="relative z-10 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InputField 
                       icon={<User />}
                       label="Tu Nombre"
@@ -395,9 +395,9 @@ Responde SOLO con "EMAIL_SENT_SUCCESS" si funcionó correctamente, o describe el
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      rows={5}
+                      rows={4}
                       placeholder="Explica tu visión o desafío técnico en detalle..."
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all text-white placeholder:text-slate-600 resize-none"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all text-white placeholder:text-slate-600 resize-none"
                     />
                     <div className="flex items-center justify-between ml-1">
                       <p className="text-xs text-slate-600">{formData.message.length} / 20 caracteres mínimo</p>
@@ -414,7 +414,7 @@ Responde SOLO con "EMAIL_SENT_SUCCESS" si funcionó correctamente, o describe el
                     whileTap={{ scale: 0.98 }}
                     disabled={isSubmitting}
                     onClick={handleSubmit}
-                    className="group relative w-full h-16 overflow-hidden rounded-2xl bg-white text-black font-black uppercase tracking-widest text-sm transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="group relative w-full h-14 overflow-hidden rounded-2xl bg-white text-black font-black uppercase tracking-widest text-sm transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <span className="relative z-10 flex items-center justify-center gap-3 group-hover:text-white transition-colors duration-300">
