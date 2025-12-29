@@ -511,9 +511,9 @@ function TikTokScreen({
                 </>
             )}
 
-            {/* Animación de corazones */}
+           {/* Animación de corazones */}
             <AnimatePresence>
-              {currentVideo === index && hearts.map((heart) => (
+              {currentVideo === index && hearts.map((heart: { id: number; x: number; y: number }) => (
                 <motion.div
                   key={heart.id}
                   initial={{ opacity: 1, scale: 0, x: "50%", y: "50%" }}
