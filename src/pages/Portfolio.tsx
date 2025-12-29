@@ -2,7 +2,6 @@
 
 import MatrixRain from "../components/background/MatrixRain";
 import { MorphingNav } from "../components/ui/morphing-nav";
-
 import Hero from "../components/sections/Hero";
 import About from "../components/sections/About";
 import Experience from "../components/sections/Experience";
@@ -25,11 +24,9 @@ export default function Portfolio() {
     { label: "Acerca", href: "#acerca" },
     { label: "Experiencia", href: "#experiencia" },
     { label: "Educación", href: "#educacion" },
-    { label: "Skills", href: "#skills" },
     { label: "Stack", href: "#stack" },
-    { label: "Patentes", href: "#patentes" },
     { label: "Proyectos", href: "#proyectos" },
-    { label: "Videos", href: "#videos" },
+    { label: "Galeria3D", href: "#videos" },
     { label: "Contacto", href: "#contacto" },
   ];
 

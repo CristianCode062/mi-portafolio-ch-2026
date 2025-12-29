@@ -22,7 +22,8 @@ import { AiOutlineCompass } from "react-icons/ai";
 ====================================================== */
 const tiktokVideos = [
   {
-    url: "https://assets.mixkit.co/videos/preview/mixkit-man-working-on-his-laptop-308-large.mp4",
+    // IMPORTANTE: En Next.js, lo que está en 'public' se accede desde la raíz '/'
+    url: "/videos/@neuroeac.cl_1.mp4", 
     username: "@neuroeac.cl",
     description: "Construyendo el futuro con código limpio 💻 #DevLife",
     likes: "3.2K",
@@ -30,21 +31,23 @@ const tiktokVideos = [
     shares: "110"
   },
   {
-    url: "https://assets.mixkit.co/videos/preview/mixkit-server-lights-in-a-data-center-3243-large.mp4",
+    // IMPORTANTE: En Next.js, lo que está en 'public' se accede desde la raíz '/'
+    url: "/videos/@neuroeac.cl_2.mp4", 
     username: "@neuroeac.cl",
-    description: "Arquitecturas distribuidas que escalan 📈",
-    likes: "1.8K",
-    comments: "95",
-    shares: "45"
+    description: "Construyendo el futuro con código limpio 💻 #DevLife",
+    likes: "3.2K",
+    comments: "220",
+    shares: "110"
   },
   {
-    url: "https://assets.mixkit.co/videos/preview/mixkit-artificial-intelligence-concept-animation-988-large.mp4",
+    // IMPORTANTE: En Next.js, lo que está en 'public' se accede desde la raíz '/'
+    url: "/videos/@neuroeac.cl_3.mp4", 
     username: "@neuroeac.cl",
-    description: "IoT + IA = Futuro 🤖 #TechInnovation",
-    likes: "4.1K",
-    comments: "305",
-    shares: "175"
-  }
+    description: "Construyendo el futuro con código limpio 💻 #DevLife",
+    likes: "3.2K",
+    comments: "220",
+    shares: "110"
+  },
 ];
 
 const galleryPhotos = [

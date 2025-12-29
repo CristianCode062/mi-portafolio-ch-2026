@@ -37,7 +37,7 @@ export default function Hero() {
         <video
           ref={videoRef}
           className="hero-video h-full w-full object-cover"
-          src="/videos/hero.mp4"
+          src="/videos/hero2.mp4"
           poster="/videos/hero-poster.jpg"
           autoPlay
           muted

@@ -196,7 +196,7 @@ const App = () => {
   };
 
   const copyEmail = () => {
-    navigator.clipboard.writeText("dev@tuportfolio.com");
+    navigator.clipboard.writeText("emilianohu@icloud.com");
     showToast("Email copiado al portapapeles");
   };
 
@@ -296,7 +296,7 @@ const App = () => {
                 </div>
                 <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Envíame un correo</h3>
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl font-bold text-slate-100">dev@tuportfolio.com</span>
+                  <span className="text-2xl font-bold text-slate-100">emilianohu@icloud.com</span>
                   <Copy size={18} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
                 </div>
               </div>
