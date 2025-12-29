@@ -62,9 +62,7 @@ export default function Portfolio() {
           <Education />
         </section>
 
-        <section id="skills">
-          <Skills />
-        </section>
+       
 
         <section id="stack">
           <TechStack />

@@ -103,32 +103,13 @@ const KeySkills = () => (
 ========================= */
 const HardSkills = () => (
   <GlassCard title="Habilidades Duras">
-    <div className="space-y-3 text-sm text-gray-300">
-      <p>
-        <span className="text-white font-semibold">Frontend:</span>{" "}
-        React, Angular, Tailwind CSS
-      </p>
-      <p>
-        <span className="text-white font-semibold">Backend:</span>{" "}
-        Node.js, Java
-      </p>
-      <p>
-        <span className="text-white font-semibold">Bases de Datos:</span>{" "}
-        PostgreSQL, MongoDB
-      </p>
-      <p>
-        <span className="text-white font-semibold">Arquitectura:</span>{" "}
-        APIs REST, Microservicios
-      </p>
-      <p>
-        <span className="text-white font-semibold">DevOps:</span>{" "}
-        Docker, Git, CI/CD
-      </p>
-      <p>
-        <span className="text-white font-semibold">Automatización:</span>{" "}
-        n8n, Integración de APIs, IA
-      </p>
-    </div>
+    <ul className="space-y-2 text-sm text-gray-300 leading-relaxed">
+      <li>✔ Diseño e implementación de arquitecturas de software escalables</li>
+      <li>✔ Desarrollo y consumo de APIs REST</li>
+      <li>✔ Diseño y modelado de bases de datos relacionales y NoSQL</li>
+      <li>✔ Implementación de microservicios y separación de responsabilidades</li>
+      <li>✔ Automatización de procesos y flujos de trabajo</li>
+    </ul>
   </GlassCard>
 );
 
