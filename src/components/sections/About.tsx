@@ -1,55 +1,28 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, PanInfo, AnimatePresence } from "framer-motion";
 import { 
-  FaCamera, 
-  FaPhone, 
-  FaEnvelope, 
-  FaSafari, 
-  FaMusic, 
-  FaAppStoreIos,
-  FaCog,
-  FaWifi,
-  FaBatteryFull,
-  FaSignal,
-  FaHeart,
-  FaComment,
-  FaShare,
-  FaChevronLeft,
-  FaSearch,
-  FaClock,
-  FaMap,
-  FaCalculator,
-  FaBook,
-  FaTiktok,
-  FaPlay,
-  FaPause
+  FaCamera, FaPhone, FaEnvelope, FaSafari, FaMusic, FaAppStoreIos,
+  FaCog, FaWifi, FaBatteryFull, FaSignal, FaHeart, FaComment,
+  FaShare, FaChevronLeft, FaSearch, FaClock, FaBook, FaTiktok,
+  FaPlay, FaCalculator
 } from "react-icons/fa";
 import { 
-  IoLocationSharp,
-  IoHome,
-  IoCalendar,
-  IoFitness,
-  IoNewspaper
+  IoLocationSharp, IoHome, IoCalendar, IoFitness, IoNewspaper 
 } from "react-icons/io5";
 import { 
-  MdMessage, 
-  MdPhotoLibrary,
-  MdContacts,
-  MdNotes,
-  MdNotifications
+  MdMessage, MdPhotoLibrary, MdContacts, MdNotes, MdNotifications 
 } from "react-icons/md";
 import { BsGrid3X3Gap } from "react-icons/bs";
 import { AiOutlineCompass } from "react-icons/ai";
 
 /* ======================================================
-   CONTENIDO - TUS VIDEOS Y FOTOS
+   DATOS DE DEMOSTRACIÓN (Reemplaza con tus propios videos)
 ====================================================== */
 const tiktokVideos = [
-  
   {
-    url: "/videos/@neuroeac.cl_1.mp4",
+    url: "https://assets.mixkit.co/videos/preview/mixkit-man-working-on-his-laptop-308-large.mp4",
     username: "@neuroeac.cl",
     description: "Construyendo el futuro con código limpio 💻 #DevLife",
     likes: "3.2K",
@@ -57,7 +30,7 @@ const tiktokVideos = [
     shares: "110"
   },
   {
-    url: "/videos/@neuroeac.cl_2.mp4",
+    url: "https://assets.mixkit.co/videos/preview/mixkit-server-lights-in-a-data-center-3243-large.mp4",
     username: "@neuroeac.cl",
     description: "Arquitecturas distribuidas que escalan 📈",
     likes: "1.8K",
@@ -65,7 +38,7 @@ const tiktokVideos = [
     shares: "45"
   },
   {
-    url: "/videos/@neuroeac.cl_3.mp4",
+    url: "https://assets.mixkit.co/videos/preview/mixkit-artificial-intelligence-concept-animation-988-large.mp4",
     username: "@neuroeac.cl",
     description: "IoT + IA = Futuro 🤖 #TechInnovation",
     likes: "4.1K",
@@ -92,14 +65,17 @@ export default function About() {
   const [currentVideo, setCurrentVideo] = useState(0);
   const [currentScreen, setCurrentScreen] = useState<"home" | "photos" | "gallery" | "apps" | "tiktok">("home");
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
+  
+  // TikTok State
   const [hearts, setHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [isLiked, setIsLiked] = useState<{ [key: number]: boolean }>({});
   const [isPlaying, setIsPlaying] = useState(true);
+  
   const videoRef = useRef<HTMLVideoElement>(null);
-  const phoneRef = useRef<HTMLDivElement>(null);
   const dragX = useMotionValue(0);
-  const [currentTime, setCurrentTime] = useState("9:41");
+  const [currentTime, setCurrentTime] = useState("09:41");
 
+  // Reloj
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -108,9 +84,20 @@ export default function About() {
       setCurrentTime(`${hours}:${minutes}`);
     };
     updateTime();
-    const interval = setInterval(updateTime, 60000);
+    const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Manejo de reproducción de video al cambiar pantallas
+  useEffect(() => {
+    if (currentScreen === 'tiktok' && videoRef.current) {
+        videoRef.current.play().catch(() => {});
+        setIsPlaying(true);
+    } else if (videoRef.current) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+    }
+  }, [currentScreen]);
 
   const handleDragEnd = (event: any, info: PanInfo) => {
     const threshold = 50;
@@ -152,14 +139,17 @@ export default function About() {
   };
 
   return (
-    <section className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-black overflow-hidden">
+    <section className="relative min-h-screen w-full bg-slate-950 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent z-10"></div>
 
-      <div className="relative grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-        {/* iPhone 3D */}
-        <div className="relative w-full h-screen flex items-center justify-center p-8">
+      {/* Fondo Animado */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-black to-black opacity-80 z-0" />
+
+      <div className="relative grid grid-cols-1 lg:grid-cols-2 min-h-screen z-10">
+        
+        {/* LADO IZQUIERDO: iPhone 3D */}
+        <div className="relative w-full h-screen flex items-center justify-center p-8 overflow-hidden">
           <motion.div
-            ref={phoneRef}
             initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
             whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
             viewport={{ once: true }}
@@ -169,94 +159,91 @@ export default function About() {
           >
             <motion.div
               animate={{ 
-                rotateY: [0, 3, -3, 0],
-                rotateX: [0, 1, -1, 0]
+                rotateY: [0, 5, -5, 0],
+                rotateX: [0, 2, -2, 0]
               }}
               transition={{ 
-                duration: 8, 
+                duration: 10, 
                 repeat: Infinity, 
                 ease: "easeInOut" 
               }}
-              className="relative w-[380px] h-[780px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[60px] shadow-2xl border-[10px] border-slate-700"
-              style={{ transformStyle: "preserve-3d" }}
+              className="relative w-[360px] h-[740px] bg-slate-900 rounded-[60px] shadow-2xl border-[8px] border-slate-800"
+              style={{ 
+                  transformStyle: "preserve-3d",
+                  boxShadow: "0 0 0 2px #334155, 0 20px 50px -10px rgba(0,0,0,0.5)"
+               }}
             >
               {/* Dynamic Island */}
               <motion.div 
-                className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-8 bg-black rounded-full z-20 flex items-center justify-center gap-2 overflow-hidden"
+                className="absolute top-4 left-1/2 -translate-x-1/2 bg-black rounded-full z-50 flex items-center justify-center gap-2 overflow-hidden border border-slate-800/50"
                 animate={{
-                  width: currentScreen === "tiktok" && isPlaying ? "140px" : "128px"
+                  width: currentScreen === "tiktok" && isPlaying ? "130px" : "110px",
+                  height: "30px"
                 }}
               >
-                <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
-                <div className="w-3 h-3 bg-slate-800 rounded-full"></div>
+                <div className="w-2 h-2 bg-slate-800 rounded-full"></div>
                 {currentScreen === "tiktok" && isPlaying && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="flex items-center gap-1"
-                  >
-                    <div className="w-1 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                    <div className="w-1 h-2 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: "0.1s" }}></div>
-                    <div className="w-1 h-4 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
-                  </motion.div>
+                  <div className="flex items-center gap-1 h-full">
+                    <span className="w-0.5 h-3 bg-green-500 animate-pulse rounded-full" />
+                    <span className="w-0.5 h-4 bg-green-500 animate-pulse delay-75 rounded-full" />
+                    <span className="w-0.5 h-2 bg-green-500 animate-pulse delay-150 rounded-full" />
+                  </div>
                 )}
               </motion.div>
 
-              {/* Pantalla */}
-              <div className="absolute inset-[14px] bg-black rounded-[50px] overflow-hidden">
+              {/* Pantalla Interna */}
+              <div className="absolute inset-[8px] bg-black rounded-[52px] overflow-hidden">
                 
-                {/* HOME SCREEN */}
-                {currentScreen === "home" && (
-                  <HomeScreen 
-                    setCurrentScreen={setCurrentScreen}
-                    currentTime={currentTime}
-                  />
-                )}
+                <AnimatePresence mode="wait">
+                    {currentScreen === "home" && (
+                    <HomeScreen key="home" setCurrentScreen={setCurrentScreen} currentTime={currentTime} />
+                    )}
 
-                {/* TIKTOK SCREEN */}
-                {currentScreen === "tiktok" && (
-                  <TikTokScreen
-                    videos={tiktokVideos}
-                    currentVideo={currentVideo}
-                    handleDragEnd={handleDragEnd}
-                    dragX={dragX}
-                    handleLike={handleLike}
-                    isLiked={isLiked}
-                    hearts={hearts}
-                    setCurrentScreen={setCurrentScreen}
-                    currentTime={currentTime}
-                    videoRef={videoRef}
-                    isPlaying={isPlaying}
-                    togglePlayPause={togglePlayPause}
-                  />
-                )}
+                    {currentScreen === "tiktok" && (
+                    <TikTokScreen
+                        key="tiktok"
+                        videos={tiktokVideos}
+                        currentVideo={currentVideo}
+                        handleDragEnd={handleDragEnd}
+                        dragX={dragX}
+                        handleLike={handleLike}
+                        isLiked={isLiked}
+                        hearts={hearts}
+                        setCurrentScreen={setCurrentScreen}
+                        currentTime={currentTime}
+                        videoRef={videoRef}
+                        isPlaying={isPlaying}
+                        togglePlayPause={togglePlayPause}
+                    />
+                    )}
 
-                {/* PHOTOS SCREEN */}
-                {currentScreen === "photos" && (
-                  <PhotosScreen
-                    photos={galleryPhotos}
-                    setSelectedPhoto={setSelectedPhoto}
-                    setCurrentScreen={setCurrentScreen}
-                    currentTime={currentTime}
-                  />
-                )}
+                    {currentScreen === "photos" && (
+                    <PhotosScreen
+                        key="photos"
+                        photos={galleryPhotos}
+                        setSelectedPhoto={setSelectedPhoto}
+                        setCurrentScreen={setCurrentScreen}
+                        currentTime={currentTime}
+                    />
+                    )}
 
-                {/* GALLERY SCREEN */}
-                {currentScreen === "gallery" && (
-                  <GalleryScreen
-                    photos={galleryPhotos}
-                    setCurrentScreen={setCurrentScreen}
-                    currentTime={currentTime}
-                  />
-                )}
+                    {currentScreen === "gallery" && (
+                    <GalleryScreen
+                        key="gallery"
+                        photos={galleryPhotos}
+                        setCurrentScreen={setCurrentScreen}
+                        currentTime={currentTime}
+                    />
+                    )}
 
-                {/* APPS SCREEN */}
-                {currentScreen === "apps" && (
-                  <AppsScreen
-                    setCurrentScreen={setCurrentScreen}
-                    currentTime={currentTime}
-                  />
-                )}
+                    {currentScreen === "apps" && (
+                    <AppsScreen
+                        key="apps"
+                        setCurrentScreen={setCurrentScreen}
+                        currentTime={currentTime}
+                    />
+                    )}
+                </AnimatePresence>
 
                 {/* Modal de foto */}
                 <AnimatePresence>
@@ -266,15 +253,15 @@ export default function About() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       onClick={() => setSelectedPhoto(null)}
-                      className="absolute inset-0 bg-black/95 z-50 flex items-center justify-center"
+                      className="absolute inset-0 bg-black/95 z-[60] flex items-center justify-center p-2"
                     >
                       <img 
                         src={galleryPhotos[selectedPhoto]} 
-                        className="max-w-full max-h-full object-contain"
+                        className="max-w-full max-h-full object-contain rounded-md"
                         alt="Selected"
                       />
                       <button 
-                        className="absolute top-8 right-8 text-white text-4xl"
+                        className="absolute top-10 right-6 text-white text-3xl opacity-80 hover:opacity-100"
                         onClick={() => setSelectedPhoto(null)}
                       >
                         ×
@@ -282,143 +269,84 @@ export default function About() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Home Indicator */}
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full z-50 pointer-events-none" />
               </div>
 
-              {/* Botones físicos */}
-              <div className="absolute left-[-10px] top-32 w-1 h-16 bg-slate-600 rounded-l-sm"></div>
-              <div className="absolute left-[-10px] top-52 w-1 h-12 bg-slate-600 rounded-l-sm"></div>
-              <div className="absolute left-[-10px] top-68 w-1 h-12 bg-slate-600 rounded-l-sm"></div>
-              <div className="absolute right-[-10px] top-40 w-1 h-20 bg-slate-600 rounded-r-sm"></div>
+              {/* Botones físicos (Estilo) */}
+              <div className="absolute left-[-4px] top-28 w-[3px] h-8 bg-slate-700 rounded-l-md" />
+              <div className="absolute left-[-4px] top-44 w-[3px] h-14 bg-slate-700 rounded-l-md" />
+              <div className="absolute left-[-4px] top-60 w-[3px] h-14 bg-slate-700 rounded-l-md" />
+              <div className="absolute right-[-4px] top-44 w-[3px] h-20 bg-slate-700 rounded-r-md" />
+
             </motion.div>
-
-            {/* Efectos de luz */}
-            <motion.div
-              animate={{
-                opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.05, 1]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-transparent to-blue-500/20 rounded-[60px] blur-2xl -z-10"
-            ></motion.div>
           </motion.div>
-
-          {/* Partículas */}
-          {[...Array(30)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ 
-                x: Math.random() * 600 - 300, 
-                y: Math.random() * 800 - 400,
-                opacity: 0 
-              }}
-              animate={{
-                y: [null, Math.random() * -150 - 100],
-                opacity: [0, 0.8, 0]
-              }}
-              transition={{
-                duration: Math.random() * 4 + 3,
-                repeat: Infinity,
-                delay: Math.random() * 3
-              }}
-              className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-            ></motion.div>
-          ))}
         </div>
 
-        {/* Contenido texto */}
-        <div className="relative z-10 flex flex-col justify-center px-8 md:px-16 py-24">
+        {/* LADO DERECHO: Contenido texto */}
+        <div className="flex flex-col justify-center px-8 md:px-16 lg:pr-24 py-12 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="max-w-2xl"
+            className="max-w-xl"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full"
-            >
-              <span className="text-red-400 text-sm font-semibold">🤖 IA</span>
-            </motion.div>
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full">
+               <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+              <span className="text-blue-400 text-xs font-bold tracking-wider">PORTAFOLIO INTERACTIVO</span>
+            </div>
 
-            <motion.h2
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
-            >
-              <span className="bg-gradient-to-r from-slate-300 to-slate-500 bg-clip-text text-transparent">
-                ACERCA DE MI 
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white">
+               Ingeniería <br/>
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                Full Stack
               </span>
-            </motion.h2>
+            </h2>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-4 mb-8"
-            >
-              <p className="text-slate-300 text-base leading-relaxed">
-                Ingeniero y líder tecnológico especializado en <span className="font-semibold text-white">sistemas críticos, tiempo real y plataformas distribuidas de misión crítica</span>. Con más de una década de experiencia navegando la intersección entre infraestructura resiliente y soluciones escalables.
+            <div className="space-y-6 mb-8 text-slate-400 text-lg">
+              <p>
+                Ingeniero y líder tecnológico especializado en <span className="text-white font-medium">sistemas críticos</span> y plataformas distribuidas. 
               </p>
-              <p className="text-slate-300 text-base leading-relaxed">
-                Diseño y opero arquitecturas que integran <span className="text-cyan-400 font-semibold">software, IoT, analítica avanzada y conectividad satelital</span>, priorizando resiliencia, observabilidad y escala.
+              <p>
+                Diseño soluciones que integran <span className="text-cyan-400 font-medium">software, IoT e IA</span>, priorizando la escalabilidad y la experiencia de usuario.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="space-y-4 mb-8"
-            >
+            <div className="grid gap-4 mb-10">
               {[
-                "⊕ Arquitecturas de sistemas críticos y tiempo real",
-                "⊕ Liderazgo técnico en proyectos de alta complejidad",
-                "⊕ Integración de IoT, IA y conectividad satelital"
+                "Arquitecturas de Alta Disponibilidad",
+                "Desarrollo Full Stack (Next.js / Python)",
+                "Integración IoT & Machine Learning"
               ].map((item, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                  className="flex items-center gap-3 px-5 py-3 bg-slate-800/30 border border-slate-700/30 rounded-lg hover:border-cyan-500/50 hover:bg-slate-800/50 transition-all duration-300"
+                  transition={{ delay: 0.2 + i * 0.1 }}
+                  className="flex items-center gap-3"
                 >
+                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
                   <span className="text-slate-300 font-medium">{item}</span>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="mt-8"
+            <motion.a 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                href="#contact"
+                className="inline-flex px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all"
             >
-              <a 
-                href="#proyectos"
-                className="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg hover:shadow-xl hover:shadow-cyan-500/50 hover:scale-105 transition-all duration-300"
-              >
-                Ver proyectos
-              </a>
-            </motion.div>
+                Ver Proyectos
+            </motion.a>
           </motion.div>
         </div>
       </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-green-600 to-transparent"></div>
     </section>
   );
 }
@@ -432,39 +360,40 @@ function HomeScreen({ setCurrentScreen, currentTime }: any) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="w-full h-full relative bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900"
+      className="w-full h-full relative bg-[url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000')] bg-cover bg-center"
     >
+      <div className="absolute inset-0 bg-black/20" />
       <StatusBar time={currentTime} />
       
-      <div className="pt-20 pb-28 px-6 h-full">
-        <div className="grid grid-cols-4 gap-6">
+      <div className="pt-16 pb-28 px-5 h-full relative z-10">
+        <div className="grid grid-cols-4 gap-x-4 gap-y-6">
           <AppIcon icon={<FaPhone />} label="Teléfono" color="from-green-400 to-green-600" />
           <AppIcon icon={<FaSafari />} label="Safari" color="from-blue-400 to-blue-600" />
           <AppIcon icon={<MdMessage />} label="Mensajes" color="from-green-400 to-green-500" />
-          <AppIcon icon={<FaEnvelope />} label="Mail" color="from-blue-500 to-blue-700" />
+          <AppIcon icon={<FaMusic />} label="Música" color="from-red-400 to-pink-500" />
           
-          <AppIcon 
-            icon={<FaTiktok />} 
-            label="TikTok" 
-            color="from-black to-gray-900" 
-            onClick={() => setCurrentScreen("tiktok")}
-          />
           <AppIcon 
             icon={<MdPhotoLibrary />} 
             label="Fotos" 
-            color="from-gradient-to-br from-yellow-400 via-red-400 to-pink-500" 
+            color="from-yellow-400 via-red-400 to-pink-500" 
             onClick={() => setCurrentScreen("photos")}
           />
           <AppIcon icon={<FaCamera />} label="Cámara" color="from-gray-600 to-gray-800" />
-          <AppIcon icon={<IoCalendar />} label="Calendario" color="from-white to-gray-200" textColor="text-red-500" />
+          <AppIcon 
+             icon={<FaTiktok />} 
+             label="TikTok" 
+             color="from-black to-gray-900" 
+             onClick={() => setCurrentScreen("tiktok")}
+           />
+          <AppIcon icon={<IoLocationSharp />} label="Mapas" color="from-green-500 to-green-700" />
           
-          <AppIcon icon={<IoLocationSharp />} label="Mapas" color="from-blue-400 to-green-400" />
           <AppIcon icon={<FaClock />} label="Reloj" color="from-gray-800 to-black" />
           <AppIcon icon={<MdNotes />} label="Notas" color="from-yellow-300 to-yellow-500" />
+          <AppIcon icon={<FaCog />} label="Ajustes" color="from-gray-500 to-gray-700" />
           <AppIcon 
             icon={<BsGrid3X3Gap />} 
             label="Apps" 
-            color="from-purple-500 to-pink-500" 
+            color="from-indigo-500 to-purple-600" 
             onClick={() => setCurrentScreen("apps")}
           />
         </div>
@@ -508,7 +437,7 @@ function TikTokScreen({
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
         style={{ x: dragX }}
-        className="w-full h-full"
+        className="w-full h-full cursor-grab active:cursor-grabbing"
         onClick={togglePlayPause}
       >
         {videos.map((video: any, index: number) => (
@@ -520,107 +449,96 @@ function TikTokScreen({
               scale: currentVideo === index ? 1 : 0.95
             }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none" 
+            // pointer-events-none en el wrapper para no bloquear el click, pero necesitamos que los botones sí funcionen
           >
-            {video.url.endsWith(".mp4") ? (
-              <video
-                ref={currentVideo === index ? videoRef : null}
-                src={video.url}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            ) : (
-              <img 
-                src={video.url} 
-                alt={`TikTok ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
+            {/* Solo renderizamos el video si es el actual para ahorrar recursos */}
+            {currentVideo === index && (
+                <video
+                    ref={videoRef}
+                    src={video.url}
+                    className="w-full h-full object-cover pointer-events-auto"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                />
             )}
+            {/* Si no es el actual, mostramos un div negro o placeholder */}
+            {currentVideo !== index && <div className="w-full h-full bg-black" />}
             
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80 pointer-events-none"></div>
             
-            {/* Sidebar de interacciones */}
-            <div className="absolute top-1/2 -translate-y-1/2 right-4 flex flex-col gap-6 z-10">
-              <motion.button
-                whileTap={{ scale: 0.8 }}
-                onClick={(e) => handleLike(index, e)}
-                className="flex flex-col items-center gap-1"
-              >
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center">
-                  <FaHeart className={`text-2xl ${isLiked[index] ? 'text-red-500' : 'text-white'}`} />
+            {/* UI Overlay - visible solo si es el actual */}
+            {currentVideo === index && (
+                <>
+                {/* Sidebar de interacciones */}
+                <div className="absolute top-1/2 -translate-y-1/2 right-4 flex flex-col gap-6 z-20 pointer-events-auto">
+                <motion.button
+                    whileTap={{ scale: 0.8 }}
+                    onClick={(e) => handleLike(index, e)}
+                    className="flex flex-col items-center gap-1"
+                >
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                    <FaHeart className={`text-xl ${isLiked[index] ? 'text-red-500' : 'text-white'}`} />
+                    </div>
+                    <span className="text-white text-[10px] font-semibold">{video.likes}</span>
+                </motion.button>
+                
+                <div className="flex flex-col items-center gap-1">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                    <FaComment className="text-xl text-white" />
+                    </div>
+                    <span className="text-white text-[10px] font-semibold">{video.comments}</span>
                 </div>
-                <span className="text-white text-xs font-semibold">{video.likes}</span>
-              </motion.button>
-              
-              <motion.button
-                whileTap={{ scale: 0.8 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center">
-                  <FaComment className="text-2xl text-white" />
+                
+                <div className="flex flex-col items-center gap-1">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                    <FaShare className="text-xl text-white" />
+                    </div>
+                    <span className="text-white text-[10px] font-semibold">{video.shares}</span>
                 </div>
-                <span className="text-white text-xs font-semibold">{video.comments}</span>
-              </motion.button>
-              
-              <motion.button
-                whileTap={{ scale: 0.8 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center">
-                  <FaShare className="text-2xl text-white" />
                 </div>
-                <span className="text-white text-xs font-semibold">{video.shares}</span>
-              </motion.button>
-            </div>
 
-            {/* Info del video */}
-            <div className="absolute bottom-24 left-4 right-20 z-10">
-              <p className="font-bold text-white text-base mb-2">{video.username}</p>
-              <p className="text-white text-sm opacity-90 line-clamp-2">{video.description}</p>
-            </div>
+                {/* Info del video */}
+                <div className="absolute bottom-24 left-4 right-20 z-10 pointer-events-none text-left">
+                <p className="font-bold text-white text-base mb-1 drop-shadow-md">{video.username}</p>
+                <p className="text-white text-sm opacity-90 line-clamp-2 drop-shadow-md">{video.description}</p>
+                </div>
+                </>
+            )}
 
             {/* Animación de corazones */}
             <AnimatePresence>
-              {hearts.map((heart) => (
+              {currentVideo === index && hearts.map((heart) => (
                 <motion.div
                   key={heart.id}
-                  initial={{ 
-                    opacity: 1, 
-                    scale: 0,
-                    x: "50%",
-                    y: "50%"
-                  }}
+                  initial={{ opacity: 1, scale: 0, x: "50%", y: "50%" }}
                   animate={{ 
                     opacity: 0,
                     scale: [0, 1.5, 1],
                     x: `calc(50% + ${heart.x}px)`,
                     y: `calc(50% + ${heart.y}px)`,
-                    rotate: Math.random() * 360
+                    rotate: Math.random() * 30 - 15
                   }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
                   className="absolute top-1/2 left-1/2 pointer-events-none z-50"
                 >
-                  <FaHeart className="text-red-500 text-4xl" />
+                  <FaHeart className="text-red-500 text-5xl drop-shadow-lg" />
                 </motion.div>
               ))}
             </AnimatePresence>
 
             {/* Indicador de play/pause */}
             <AnimatePresence>
-              {!isPlaying && (
+              {!isPlaying && currentVideo === index && (
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0, opacity: 0 }}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
                 >
-                  <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
-                    <FaPlay className="text-white text-3xl ml-1" />
-                  </div>
+                  <FaPlay className="text-white/50 text-6xl" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -628,24 +546,10 @@ function TikTokScreen({
         ))}
       </motion.div>
 
-      {/* Indicadores */}
-      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
-        {videos.map((_: any, index: number) => (
-          <motion.div
-            key={index}
-            animate={{
-              scale: currentVideo === index ? 1.3 : 1,
-              backgroundColor: currentVideo === index ? "#FFFFFF" : "#64748b"
-            }}
-            className="w-2 h-2 rounded-full"
-          />
-        ))}
-      </div>
-
       {/* Header TikTok */}
-      <div className="absolute top-12 left-0 right-0 flex justify-center gap-8 z-30">
-        <span className="text-white/60 text-base font-semibold">Siguiendo</span>
-        <span className="text-white text-base font-bold">Para ti</span>
+      <div className="absolute top-12 left-0 right-0 flex justify-center gap-4 z-30 pointer-events-none">
+        <span className="text-white/60 text-sm font-semibold">Siguiendo</span>
+        <span className="text-white text-sm font-bold border-b-2 border-white pb-0.5">Para ti</span>
       </div>
 
       <Dock setCurrentScreen={setCurrentScreen} showTikTok />
@@ -659,39 +563,39 @@ function TikTokScreen({
 function PhotosScreen({ photos, setSelectedPhoto, setCurrentScreen, currentTime }: any) {
   return (
     <motion.div
-      initial={{ y: "100%" }}
-      animate={{ y: 0 }}
-      exit={{ y: "100%" }}
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
       transition={{ type: "spring", damping: 30 }}
-      className="w-full h-full bg-black relative"
+      className="w-full h-full bg-white relative text-black"
     >
       <StatusBar time={currentTime} />
       
-      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 pt-4 z-30">
+      <div className="absolute top-0 left-0 right-0 h-24 bg-white/90 backdrop-blur-md flex items-end justify-between px-4 pb-3 z-30 border-b border-gray-200">
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => setCurrentScreen("home")}
-          className="text-cyan-400 text-lg font-semibold flex items-center gap-2"
+          className="text-blue-500 text-lg font-medium flex items-center gap-1"
         >
-          <FaChevronLeft /> Atrás
+          <FaChevronLeft size={16} /> Álbumes
         </motion.button>
-        <span className="text-white font-bold text-xl">Fotos</span>
-        <FaSearch className="text-white text-lg" />
+        <span className="font-bold text-lg">Recientes</span>
+        <span className="text-blue-500 text-sm font-medium">Seleccionar</span>
       </div>
 
-      <div className="pt-24 pb-28 px-4 h-full overflow-y-auto">
-        <div className="grid grid-cols-3 gap-2">
+      <div className="pt-24 pb-28 px-0.5 h-full overflow-y-auto bg-white">
+        <div className="grid grid-cols-3 gap-0.5">
           {photos.map((photo: string, index: number) => (
             <motion.div
               key={index}
-              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedPhoto(index)}
-              className="aspect-square rounded-lg overflow-hidden cursor-pointer"
+              className="aspect-square relative cursor-pointer"
             >
               <img 
                 src={photo} 
-                alt={`Photo ${index + 1}`}
+                alt={`Photo ${index}`}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </motion.div>
           ))}
@@ -709,40 +613,33 @@ function PhotosScreen({ photos, setSelectedPhoto, setCurrentScreen, currentTime 
 function GalleryScreen({ photos, setCurrentScreen, currentTime }: any) {
   return (
     <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.8, opacity: 0 }}
-      className="w-full h-full bg-gradient-to-br from-slate-900 to-black relative"
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      className="w-full h-full bg-white relative text-black"
     >
       <StatusBar time={currentTime} />
       
-      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between px-6 pt-4 z-30">
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setCurrentScreen("home")}
-          className="text-cyan-400 text-lg font-semibold flex items-center gap-2"
-        >
-          <FaChevronLeft /> Atrás
-        </motion.button>
-        <span className="text-white font-bold text-xl">Álbumes</span>
-        <FaSearch className="text-white text-lg" />
+      <div className="absolute top-0 left-0 right-0 h-28 bg-white flex items-end justify-between px-5 pb-2 z-30 border-b">
+        <h1 className="font-bold text-3xl">Álbumes</h1>
+        <FaSearch className="text-blue-500 text-xl mb-1" />
       </div>
 
-      <div className="pt-24 pb-28 px-6 h-full overflow-y-auto">
-        <div className="space-y-3">
-          {photos.slice(0, 4).map((photo: string, index: number) => (
-            <motion.div
-              key={index}
-              whileTap={{ scale: 0.98 }}
-              className="w-full h-48 rounded-2xl overflow-hidden shadow-xl"
-            >
-              <img 
-                src={photo} 
-                alt={`Gallery ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-          ))}
+      <div className="pt-28 pb-28 px-4 h-full overflow-y-auto">
+        <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="flex flex-col gap-2" onClick={() => setCurrentScreen("photos")}>
+                 <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 relative">
+                     <img src={photos[0]} className="w-full h-full object-cover" alt="" />
+                     <span className="absolute bottom-2 right-2 text-xs text-white bg-black/50 px-2 rounded-full">{photos.length}</span>
+                 </div>
+                 <span className="text-sm font-medium">Recientes</span>
+            </div>
+            <div className="flex flex-col gap-2">
+                 <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                     <FaHeart className="text-red-400 text-4xl" />
+                 </div>
+                 <span className="text-sm font-medium">Favoritos</span>
+            </div>
         </div>
       </div>
 
@@ -759,54 +656,34 @@ function AppsScreen({ setCurrentScreen, currentTime }: any) {
     <motion.div
       initial={{ scale: 1.1, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 1.1, opacity: 0 }}
-      className="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative"
+      className="w-full h-full bg-slate-800/50 backdrop-blur-xl relative"
     >
       <StatusBar time={currentTime} />
 
-      <div className="pt-16 pb-28 px-6 h-full overflow-y-auto">
-        <div className="grid grid-cols-4 gap-4">
-          <AppIcon icon={<FaPhone />} label="Teléfono" color="from-green-400 to-green-600" />
-          <AppIcon icon={<FaSafari />} label="Safari" color="from-blue-400 to-blue-600" />
-          <AppIcon icon={<MdMessage />} label="Mensajes" color="from-green-400 to-green-500" />
-          <AppIcon icon={<FaEnvelope />} label="Mail" color="from-blue-500 to-blue-700" />
-          
-          <AppIcon icon={<FaMusic />} label="Música" color="from-red-400 to-pink-500" />
-          <AppIcon 
-            icon={<MdPhotoLibrary />} 
-            label="Fotos" 
-            color="from-red-400 to-orange-500" 
-            onClick={() => setCurrentScreen("photos")} 
-          />
-          <AppIcon icon={<FaCamera />} label="Cámara" color="from-gray-600 to-gray-800" />
-          <AppIcon icon={<IoCalendar />} label="Calendario" color="from-white to-gray-200" textColor="text-red-500" />
-          
-          <AppIcon icon={<IoLocationSharp />} label="Mapas" color="from-blue-400 to-green-400" />
-          <AppIcon icon={<FaClock />} label="Reloj" color="from-gray-800 to-black" />
-          <AppIcon icon={<MdNotes />} label="Notas" color="from-yellow-300 to-yellow-500" />
-          <AppIcon icon={<MdNotifications />} label="Recordatorios" color="from-blue-400 to-blue-600" />
-          
-          <AppIcon icon={<FaAppStoreIos />} label="App Store" color="from-blue-500 to-blue-700" />
-          <AppIcon icon={<FaBook />} label="Libros" color="from-orange-400 to-red-500" />
-          <AppIcon icon={<MdContacts />} label="Contactos" color="from-gray-500 to-gray-700" />
-          <AppIcon icon={<FaCog />} label="Ajustes" color="from-gray-600 to-gray-800" />
-          
-          <AppIcon icon={<FaCalculator />} label="Calculadora" color="from-gray-700 to-gray-900" />
-          <AppIcon icon={<IoFitness />} label="Salud" color="from-red-400 to-pink-500" />
-          <AppIcon icon={<IoNewspaper />} label="Noticias" color="from-red-500 to-pink-500" />
-          <AppIcon icon={<AiOutlineCompass />} label="Brújula" color="from-gray-700 to-black" />
-          
-          <AppIcon 
-            icon={<FaTiktok />} 
-            label="TikTok" 
-            color="from-black to-gray-900" 
-            onClick={() => setCurrentScreen("tiktok")}
-          />
+      <div className="pt-16 pb-28 px-5 h-full overflow-y-auto">
+        
+        <div className="mb-6 bg-gray-500/20 rounded-xl p-2 flex items-center gap-2">
+             <FaSearch className="text-white/50 ml-1" />
+             <span className="text-white/50 text-sm">Biblioteca de Apps</span>
         </div>
 
-        <div className="mt-8 bg-white/10 backdrop-blur-xl rounded-2xl px-4 py-3 flex items-center gap-3">
-          <FaSearch className="text-white/60 text-lg" />
-          <span className="text-white/60">Buscar</span>
+        <div className="grid grid-cols-4 gap-4">
+          <AppIcon icon={<FaPhone />} label="Teléfono" color="from-green-400 to-green-600" />
+          <AppIcon icon={<MdMessage />} label="Mensajes" color="from-green-400 to-green-500" />
+          <AppIcon icon={<FaSafari />} label="Safari" color="from-white to-gray-200" textColor="text-blue-500" />
+          <AppIcon icon={<FaMusic />} label="Música" color="from-red-400 to-pink-500" />
+          <AppIcon icon={<MdPhotoLibrary />} label="Fotos" color="from-white to-gray-100" textColor="text-black" onClick={() => setCurrentScreen("photos")} />
+          <AppIcon icon={<FaCamera />} label="Cámara" color="from-gray-700 to-gray-900" />
+          <AppIcon icon={<FaTiktok />} label="TikTok" color="from-black to-gray-800" onClick={() => setCurrentScreen("tiktok")} />
+          <AppIcon icon={<IoLocationSharp />} label="Mapas" color="from-green-500 to-green-700" />
+          <AppIcon icon={<FaClock />} label="Reloj" color="from-black to-gray-900" />
+          <AppIcon icon={<MdNotes />} label="Notas" color="from-yellow-300 to-yellow-500" />
+          <AppIcon icon={<FaCog />} label="Ajustes" color="from-gray-500 to-gray-700" />
+          <AppIcon icon={<FaAppStoreIos />} label="App Store" color="from-blue-500 to-blue-700" />
+          <AppIcon icon={<FaBook />} label="Libros" color="from-orange-400 to-red-500" />
+          <AppIcon icon={<FaCalculator />} label="Calc" color="from-gray-700 to-gray-900" />
+          <AppIcon icon={<IoFitness />} label="Fitness" color="from-black to-gray-900" textColor="text-green-500" />
+          <AppIcon icon={<IoNewspaper />} label="News" color="from-pink-500 to-red-600" />
         </div>
       </div>
 
@@ -820,12 +697,12 @@ function AppsScreen({ setCurrentScreen, currentTime }: any) {
 ====================================================== */
 function StatusBar({ time }: { time: string }) {
   return (
-    <div className="absolute top-0 left-0 right-0 h-12 flex items-center justify-between px-8 pt-3 text-white text-xs font-semibold z-30">
+    <div className="absolute top-0 left-0 right-0 h-10 flex items-center justify-between px-6 pt-3 text-white text-[10px] font-bold z-50 pointer-events-none mix-blend-difference">
       <span>{time}</span>
-      <div className="flex gap-2 items-center">
-        <FaSignal className="text-xs" />
-        <FaWifi className="text-xs" />
-        <FaBatteryFull className="text-base" />
+      <div className="flex gap-1.5 items-center">
+        <FaSignal />
+        <FaWifi />
+        <FaBatteryFull className="text-lg" />
       </div>
     </div>
   );
@@ -834,38 +711,40 @@ function StatusBar({ time }: { time: string }) {
 function Dock({ setCurrentScreen, showTikTok = false }: any) {
   return (
     <motion.div 
-      className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-20 bg-white/10 backdrop-blur-2xl rounded-3xl flex items-center justify-around px-4 z-30"
-      whileTap={{ scale: 0.95 }}
+      className="absolute bottom-5 left-4 right-4 h-[75px] bg-white/20 backdrop-blur-2xl rounded-[30px] flex items-center justify-around px-2 z-50 border border-white/10"
+      initial={{ y: 100 }}
+      animate={{ y: 0 }}
     >
-      <motion.button
-        whileTap={{ scale: 0.85 }}
-        onClick={() => setCurrentScreen("home")}
-        className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg"
-      >
-        <IoHome className="text-white text-2xl" />
-      </motion.button>
-      <motion.button
-        whileTap={{ scale: 0.85 }}
-        onClick={() => setCurrentScreen(showTikTok ? "tiktok" : "photos")}
-        className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
-      >
-        {showTikTok ? <FaTiktok className="text-white text-2xl" /> : <FaCamera className="text-white text-2xl" />}
-      </motion.button>
-      <motion.button
-        whileTap={{ scale: 0.85 }}
-        onClick={() => setCurrentScreen("gallery")}
-        className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg"
-      >
-        <MdPhotoLibrary className="text-white text-2xl" />
-      </motion.button>
-      <motion.button
-        whileTap={{ scale: 0.85 }}
-        className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
-      >
-        <FaMusic className="text-white text-2xl" />
-      </motion.button>
+      <DockIcon onClick={() => setCurrentScreen("home")} color="from-blue-400 to-blue-600" icon={<IoHome className="text-2xl" />} />
+      
+      <DockIcon 
+        onClick={() => setCurrentScreen(showTikTok ? "tiktok" : "photos")} 
+        color={showTikTok ? "from-black to-gray-900" : "from-purple-400 to-pink-500"} 
+        icon={showTikTok ? <FaTiktok className="text-xl" /> : <MdPhotoLibrary className="text-2xl" />} 
+      />
+      
+      <DockIcon 
+        onClick={() => setCurrentScreen("apps")} 
+        color="from-green-400 to-green-600" 
+        icon={<BsGrid3X3Gap className="text-2xl" />} 
+      />
+      
+      <DockIcon color="from-orange-400 to-red-500" icon={<FaMusic className="text-2xl" />} />
     </motion.div>
   );
+}
+
+function DockIcon({ color, icon, onClick }: { color: string, icon: React.ReactNode, onClick?: () => void }) {
+    return (
+        <motion.button
+            whileHover={{ scale: 1.1, y: -5 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onClick}
+            className={`w-12 h-12 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center text-white shadow-lg`}
+        >
+            {icon}
+        </motion.button>
+    )
 }
 
 function AppIcon({ 
@@ -883,16 +762,17 @@ function AppIcon({
 }) {
   return (
     <motion.div
-      whileTap={{ scale: 0.85 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.9 }}
       onClick={onClick}
       className="flex flex-col items-center gap-1 cursor-pointer"
     >
-      <div className={`w-14 h-14 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg ${textColor}`}>
+      <div className={`w-[52px] h-[52px] bg-gradient-to-br ${color} rounded-[14px] flex items-center justify-center shadow-md ${textColor}`}>
         <div className="text-2xl">
           {icon}
         </div>
       </div>
-      <span className="text-white text-[10px] text-center leading-tight max-w-[60px]">
+      <span className="text-white text-[10px] font-medium text-center truncate w-full">
         {label}
       </span>
     </motion.div>
